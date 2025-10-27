@@ -1,0 +1,6 @@
+@OzoraSoft.API.Utils_HostAddress = http://localhost:5104
+
+GET {{OzoraSoft.API.Utils_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###

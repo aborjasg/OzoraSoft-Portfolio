@@ -1,0 +1,31 @@
+﻿@inherits LayoutComponentBase
+@using Microsoft.AspNetCore.Authorization
+@using OzoraSoft.Web.Components.Pages
+@attribute [Authorize]
+
+<div class="page">
+    <div class="sidebar">
+        <NavMenu />
+    </div>
+
+    <main>
+        <div class="top-row px-4">            
+            
+        </div>
+
+        <article class="content px-4">
+            <div style="border: 1px solid darkgray; padding: 10px; width: 350px;">
+                <UserLogin />
+            </div>            
+            <div>
+                @Body
+            </div>            
+        </article>
+    </main>
+</div>
+
+<div id="blazor-error-ui">
+    An unhandled error has occurred.
+    <a href="" class="reload">Reload</a>
+    <a class="dismiss">🗙</a>
+</div>

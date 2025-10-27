@@ -1,0 +1,33 @@
+﻿<h3>Login</h3>
+
+<form method="post">
+    <div>
+        <div class="form-floating mb-3">
+            <input type="email" class="form-control" id="floatingInput" placeholder="name@ozorasoft.ca" maxlength=50>
+            <label for="floatingInput">User Name</label>
+        </div>
+        <div class="form-floating mb-3">
+            <input type="password" class="form-control" id="floatingPassword" placeholder="********" maxlength=50>
+            <label for="floatingPassword">Password</label>
+        </div>
+        <div class="form-floating">
+            <button type="submit" class="btn btn-outline-primary" @onclick="SubmitLogin">
+                <span class="icon bi bi-box-arrow-in-right"></span> Login
+            </button>
+            <button type="button" class="btn btn-outline-dark" @onclick="CloseLogin">
+                <span class="icon bi bi-door-open"></span> Close
+            </button>
+        </div>
+    </div>
+</form>
+
+@code {
+    private Task SubmitLogin(MouseEventArgs args)
+    {
+        throw new NotImplementedException();
+    }
+    private void CloseLogin(MouseEventArgs args)
+    {
+        throw new NotImplementedException();
+    }
+}

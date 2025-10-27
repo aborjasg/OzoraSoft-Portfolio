@@ -1,0 +1,23 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <TargetFramework>net9.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="9.0.10" />
+    <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="9.0.10" />
+    <PackageReference Include="MySql.Data" Version="9.5.0" />
+    <PackageReference Include="Orestes.SharedLibrary" Version="1.0.3" />
+    <PackageReference Include="Pomelo.EntityFrameworkCore.MySql" Version="9.0.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\OzoraSoft.DataSources\OzoraSoft.DataSources.csproj" />
+    <ProjectReference Include="..\OzoraSoft.Library.Security\OzoraSoft.Library.Security.csproj" />
+    <ProjectReference Include="..\OzoraSoft.ServiceDefaults\OzoraSoft.ServiceDefaults.csproj" />
+  </ItemGroup>
+
+</Project>
