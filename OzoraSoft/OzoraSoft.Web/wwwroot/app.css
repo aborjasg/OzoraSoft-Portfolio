@@ -13,8 +13,15 @@ a:hover {
     text-decoration: underline;    
 }
 
-.icon {
-    font-size: 15px;
+i {
+    font-size: 18px;
+    align-content: center;
+    vertical-align: middle;
+}
+
+button {
+    align-content: center;
+    vertical-align: middle;
 }
 
 .btn {
@@ -42,6 +49,10 @@ h1:focus {
 
 h3 {
     color: rebeccapurple;
+}
+
+h4 {
+    color: navy;
 }
 
 .valid.modified:not([type=checkbox]) {

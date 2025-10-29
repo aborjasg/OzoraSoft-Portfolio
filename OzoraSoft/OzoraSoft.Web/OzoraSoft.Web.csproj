@@ -18,6 +18,7 @@
     <ProjectReference Include="..\OzoraSoft.API.Services\OzoraSoft.API.Services.csproj" />
     <ProjectReference Include="..\OzoraSoft.API.Utils\OzoraSoft.API.Utils.csproj" />
     <ProjectReference Include="..\OzoraSoft.Library.Enums\OzoraSoft.Library.Enums.csproj" />
+    <ProjectReference Include="..\OzoraSoft.Library.Messaging\OzoraSoft.Library.Messaging.csproj" />
     <ProjectReference Include="..\OzoraSoft.ServiceDefaults\OzoraSoft.ServiceDefaults.csproj" />
   </ItemGroup>
 

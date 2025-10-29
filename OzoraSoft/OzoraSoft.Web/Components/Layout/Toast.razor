@@ -1,0 +1,81 @@
+﻿@using OzoraSoft.Library.Enums.Shared
+@using OzoraSoft.Library.Messaging.UI_Components
+@attribute [StreamRendering(true)]
+@attribute [OutputCache(Duration = 5)]
+@rendermode InteractiveServer
+@inject ToastService ToastService
+
+@if (ShowMessage)
+{
+    <div class="toast-message-container ">
+        <div class="toast-message-header">
+            <strong class="me-auto">@MessageTitle</strong>
+            <small>@MessageSubtitle</small>            
+            <button class="toast-close-button" @onclick="HideMessage">
+                <i class="bi bi-x-circle"></i>
+            </button>
+        </div>
+        <div class="toast-message-body @MessageTypeClass">
+            <span>@MessageBody</span>
+        </div>       
+    </div>
+    
+    @*    *@
+}
+
+@code {
+    // Boolean flag to control toast visibility
+    private bool ShowMessage { get; set; } = false;
+
+    // Message content and type
+    private enmLogLevel MessageType { get; set; } = enmLogLevel.Info; // Default message type
+    private string MessageTitle { get; set; } = string.Empty;
+    private string MessageSubtitle { get; set; } = string.Empty;
+    private string MessageBody { get; set; } = string.Empty;
+
+
+    // Determines CSS class based on message type
+    private string MessageTypeClass => MessageType switch
+    {
+        enmLogLevel.Info => "toast-message-info",        
+        enmLogLevel.Debug => "toast-message-debug",        
+        enmLogLevel.Warning => "toast-message-warning",
+        enmLogLevel.Error => "toast-message-alert",
+        enmLogLevel.Critical => "toast-message-critical",
+        _ => "toast-message-info"
+    };
+
+    protected override void OnInitialized()
+    {
+        ToastService.OnShow += ShowToast; // Subscribe to toast events
+        ToastService.OnHide += HideMessage;
+    }
+
+    private async void ShowToast(enmLogLevel type, string messageTitle, string messageSubtitle, string messageBody, int dismissAfter)
+    {
+        MessageType = type;
+        MessageTitle = messageTitle;
+        MessageSubtitle = messageSubtitle;
+        MessageBody = messageBody;
+        ShowMessage = true;
+        await InvokeAsync(StateHasChanged); // Update the UI
+        if (dismissAfter > 0)
+        {
+            await Task.Delay(dismissAfter * 1000);
+            HideMessage();
+        }
+    }
+
+    private void HideMessage()
+    {
+        ShowMessage = false;
+        InvokeAsync(StateHasChanged); // force UI refresh
+    }
+
+    public void Dispose()
+    {
+        ToastService.OnShow -= ShowToast; // Clean up subscriptions
+        ToastService.OnHide -= HideMessage;
+    }
+}
+

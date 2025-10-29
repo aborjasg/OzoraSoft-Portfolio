@@ -2,6 +2,7 @@ using OzoraSoft.Library.Security;
 using OzoraSoft.Web;
 using OzoraSoft.Web.Components;
 using Microsoft.Extensions.Configuration;
+using OzoraSoft.Library.Messaging.UI_Components;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -29,6 +30,9 @@ builder.Services.AddHttpClient<OzoraSoft_API_Services_Client>(client =>
 var section = builder.Configuration.GetSection("LoginModel");
 var loginModel = section.Get<LoginModel>();
 builder.Services.AddSingleton(loginModel!);
+
+// UI Components
+builder.Services.AddSingleton<ToastService>();
 
 var app = builder.Build();
 

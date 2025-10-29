@@ -7,7 +7,11 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Folder Include="UI_Components\" />
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\OzoraSoft.Library.Enums\OzoraSoft.Library.Enums.csproj" />
   </ItemGroup>
 
 </Project>

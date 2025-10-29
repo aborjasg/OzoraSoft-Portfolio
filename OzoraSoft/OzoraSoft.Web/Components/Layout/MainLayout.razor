@@ -1,7 +1,8 @@
 ﻿@inherits LayoutComponentBase
 @using Microsoft.AspNetCore.Authorization
 @using OzoraSoft.Web.Components.Pages
-@attribute [Authorize]
+
+<Toast /> <!-- Toast Component -->
 
 <div class="page">
     <div class="sidebar">
@@ -13,13 +14,8 @@
             
         </div>
 
-        <article class="content px-4">
-            <div style="border: 1px solid darkgray; padding: 10px; width: 350px;">
-                <UserLogin />
-            </div>            
-            <div>
-                @Body
-            </div>            
+        <article class="content px-4">                                   
+            @Body
         </article>
     </main>
 </div>

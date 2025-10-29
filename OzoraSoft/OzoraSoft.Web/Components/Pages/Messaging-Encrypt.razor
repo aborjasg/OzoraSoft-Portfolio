@@ -7,7 +7,7 @@
 
 <PageTitle>OzoraSoft-Porfolio</PageTitle>
 
-<h3>Utils.Messaging</h3>
+<h3>Messaging</h3>
 <h4>Encrypt/decrypt texts</h4>
 
 <div style="width: 500px;">
@@ -16,13 +16,13 @@
         <textarea class="form-control" aria-label="Input" @bind="inputText" style="width: 500px;" placeholder="Input"></textarea>
     </div>
     <div>
-        <button id="btn_compress" type="button" class="btn btn-outline-primary" @onclick="EncryptText">
+        <button type="button" class="btn btn-outline-primary" @onclick="EncryptText">
             <i class="bi bi-envelope-check"></i> Encrypt
         </button>
-        <button id="btn_decompress" type="button" class="btn btn-outline-primary" @onclick="DecryptText">
+        <button type="button" class="btn btn-outline-primary" @onclick="DecryptText">
             <i class="bi bi-envelope-open"></i> Decrypt
         </button>
-        <button id="btn_reset" type="button" class="btn btn-outline-dark" @onclick="ResetResults">
+        <button type="button" class="btn btn-outline-dark" @onclick="ResetResults">
             <i class="bi bi-x-circle"></i> Reset
         </button>
     </div>
