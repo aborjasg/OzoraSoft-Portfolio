@@ -1,4 +1,4 @@
-﻿@page "/systemparameters"
+﻿@page "/infoseccontrols-organizationpolicies"
 @using System.Collections
 @using OzoraSoft.DataSources.InfoSecControls
 @using OzoraSoft.Library.Enums.InfoSecControls;
@@ -15,17 +15,11 @@
 <PageTitle>OzoraSoft-Porfolio</PageTitle>
 
 <h3>Information Security Controls</h3>
-<h4>System Parameters</h4>
+<h4>Organization Policies</h4>
 
-<div style="width: 500px;">
+<div style="width: 1200px;">
     <hr />
-    <select class="form-select" @bind="_selectedGroupId" style="width: 300px;">
-        @foreach (int item in Enum.GetValues(typeof(enumSystemParameterGroups)).Cast<int>().OrderBy(i => i))
-        {
-            <option value=@item selected=@(item == _selectedGroupId)>@((enumSystemParameterGroups)item)</option>
-        }
-    </select>
-    <button type="button" class="btn btn-outline-primary" @onclick="LoadData">
+    <button type="button" class="btn btn-outline-primary" @onclick="LoadList">
         <i class="bi bi-cloud-arrow-down"></i> Load
     </button>
     <button type="button" class="btn btn-outline-dark" @onclick="ResetResults">
@@ -39,18 +33,24 @@
         <table class="table table-striped">
             <thead class="table-dark">
                 <tr>
-                    <th style="width: 80px">Group Id</th>
-                    <th style="width: 50px">Id</th>
-                    <th>Name</th>
+                    <th style="width: 30px">Id</th>
+                    <th style="width: 50px">Code</th>
+                    <th style="width: 200px;">Name</th>
+                    <th style="width: 100px;">Control_Type</th>
+                    <th style="width: 100px;">Information_Security_Properties</th>
+                    <th style="width: 100px;">Cybersecurity_Concepts</th>                    
                 </tr>
             </thead>
             <tbody>
-                @foreach (SystemParameter record in _list)
+                @foreach (OrganizationPolicy record in _list)
                 {
                     <tr>
-                        <td>@record.Group_Id</td>
-                        <td><b>@record.Id</b></td>
-                        <td>@record.Name</td>                    
+                        <td>@record.Id</td>
+                        <td><b>@record.Code</b></td>
+                        <td><b>@record.Name</b></td>
+                        <td>@record.Control_Type</td>
+                        <td>@record.Information_Security_Properties</td>
+                        <td>@record.Cybersecurity_Concepts</td>
                     </tr>
                 }
             </tbody>
@@ -71,12 +71,11 @@
     private string _status = "";
     private string _accessToken = "";
     private bool isLoading = false;
-    private IList _list = new List<SystemParameter>();
-    private int _selectedGroupId = Convert.ToInt16(enumSystemParameterGroups.AllGroups);
+    private IList _list = new List<OrganizationPolicy>();
 
     protected void ResetResults()
     {
-        _list = new List<SystemParameter>();
+        _list = new List<OrganizationPolicy>();
         _status = "";
     }
 
@@ -87,20 +86,15 @@
         _accessToken = result.access_token;
     }
 
-    protected async Task LoadData()
-    {
-        await SystemParameters_Load(_selectedGroupId);
-    }
-
-    protected async Task SystemParameters_Load(int groupId)
+    protected async Task LoadList()
     {
         ResetResults();
         isLoading = true;
-        _list = await ApiServicesClient.SystemParameters_GetList(groupId, _accessToken);
-        Console.WriteLine($"Retrieved {_list.Count} row(s) for Group ID {groupId}");
+        _list = await ApiServicesClient.OrganizationPolicies_GetList(_accessToken);
+        Console.WriteLine($"Retrieved {_list.Count} row(s)");
         _status = $"Rows: {_list.Count}";
         _messageBody = _status;
         isLoading = false;
-        ToastService.ShowToast(enmLogLevel.Critical, _messageBody, 5);
+        ToastService.ShowToast(enmLogLevel.Info, _messageBody, 5);
     }
 }

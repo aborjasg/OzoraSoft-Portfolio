@@ -9,7 +9,7 @@ using Microsoft.EntityFrameworkCore;
 using OzoraSoft.DataSources;
 using OzoraSoft.DataSources.InfoSecControls;
 
-namespace OzoraSoft.API.Services.Controllers
+namespace OzoraSoft.API.Services.InfoSecControls
 {
     [Route("api/[controller]")]
     [ApiController]

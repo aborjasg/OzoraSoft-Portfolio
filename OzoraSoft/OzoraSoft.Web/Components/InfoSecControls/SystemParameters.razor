@@ -1,0 +1,106 @@
+﻿@page "/infoseccontrols-systemparameters"
+@using System.Collections
+@using OzoraSoft.DataSources.InfoSecControls
+@using OzoraSoft.Library.Enums.InfoSecControls;
+@using OzoraSoft.Library.Enums.Shared
+@using OzoraSoft.Library.Messaging.UI_Components
+@attribute [StreamRendering(true)]
+@attribute [OutputCache(Duration = 5)]
+@rendermode InteractiveServer
+
+@inject OzoraSoft_API_Util_Client ApiUtilsClient
+@inject OzoraSoft_API_Services_Client ApiServicesClient
+@inject ToastService ToastService
+
+<PageTitle>OzoraSoft-Porfolio</PageTitle>
+
+<h3>Information Security Controls</h3>
+<h4>System Parameters</h4>
+
+<div style="width: 500px;">
+    <hr />
+    <select class="form-select" @bind="_selectedGroupId" style="width: 300px;">
+        @foreach (int item in Enum.GetValues(typeof(enumSystemParameterGroups)).Cast<int>().OrderBy(i => i))
+        {
+            <option value=@item selected=@(item == _selectedGroupId)>@((enumSystemParameterGroups)item)</option>
+        }
+    </select>
+    <button type="button" class="btn btn-outline-primary" @onclick="LoadData">
+        <i class="bi bi-cloud-arrow-down"></i> Load
+    </button>
+    <button type="button" class="btn btn-outline-dark" @onclick="ResetResults">
+        <i class="bi bi-x-circle"></i> Reset
+    </button>    
+    
+    <span>@_status</span>
+    <hr />
+    @if (_list.Count > 0)
+    {
+        <table class="table table-striped">
+            <thead class="table-dark">
+                <tr>
+                    <th style="width: 80px">Group Id</th>
+                    <th style="width: 50px">Id</th>
+                    <th>Name</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (SystemParameter record in _list)
+                {
+                    <tr>
+                        <td>@record.Group_Id</td>
+                        <td><b>@record.Id</b></td>
+                        <td>@record.Name</td>                    
+                    </tr>
+                }
+            </tbody>
+        </table>        
+    }
+    
+    @if (isLoading)
+    {
+        <div class="spinner-border" role="status">
+            <span class="visually-hidden">Loading...</span>
+        </div>
+    }
+
+</div>
+
+@code {
+    private string _messageBody = "";
+    private string _status = "";
+    private string _accessToken = "";
+    private bool isLoading = false;
+    private IList _list = new List<SystemParameter>();
+    private int _selectedGroupId = Convert.ToInt16(enumSystemParameterGroups.AllGroups);
+
+    protected void ResetResults()
+    {
+        _list = new List<SystemParameter>();
+        _status = "";
+    }
+
+    protected override async Task OnInitializedAsync()
+    {
+        // Get access token
+        var result = await ApiUtilsClient.AccessToken_Get();
+        _accessToken = result.access_token;
+    }
+
+    protected async Task LoadData()
+    {
+        await SystemParameters_Load(_selectedGroupId);
+    }
+
+    protected async Task SystemParameters_Load(int groupId)
+    {
+        ResetResults();
+        isLoading = true;
+        _list = await ApiServicesClient.SystemParameters_GetList(groupId, _accessToken);
+        Console.WriteLine($"Retrieved {_list.Count} row(s) for Group ID {groupId}");
+        _status = $"Rows: {_list.Count}";
+        _messageBody = _status;
+        isLoading = false;
+        ToastService.ShowToast(enmLogLevel.Info, _messageBody, 5);
+    }
+}

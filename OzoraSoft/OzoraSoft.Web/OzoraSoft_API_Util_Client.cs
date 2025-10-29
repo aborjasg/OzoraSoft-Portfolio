@@ -2,6 +2,7 @@
 using Org.BouncyCastle.Asn1.Ocsp;
 using OzoraSoft.API.Utils.Models;
 using OzoraSoft.Library.Security;
+using OzoraSoft.Library.Security.Services;
 using System.Net.Http.Headers;
 using System.Net.Http.Json;
 using static System.Net.WebRequestMethods;
@@ -23,7 +24,7 @@ namespace OzoraSoft.Web
             LoginModel model = new() { Username = _username , Password = _password };
             var result = new TokenResponse();
 
-            using var response = await httpClient.PostAsJsonAsync("/api/Authentication/login", model, cancellationToken); ;
+            using var response = await httpClient.PostAsJsonAsync(ApiServices.API_AUTHENTICATION_LOGIN, model, cancellationToken); ;
             if (response.IsSuccessStatusCode)
             {
                 // if API returns JSON body, deserialize it directly:
@@ -44,7 +45,7 @@ namespace OzoraSoft.Web
             httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
 
             var result = new Message() { Input = uncompressedText };
-            using var response = await httpClient.PostAsJsonAsync("/api/Messaging/compress", result, cancellationToken); ;
+            using var response = await httpClient.PostAsJsonAsync(ApiServices.API_MESSAGING_COMPRESS, result, cancellationToken); ;
 
             if (response.IsSuccessStatusCode)
             {
@@ -66,7 +67,7 @@ namespace OzoraSoft.Web
             httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
 
             var result = new Message() { Input = compressedText };
-            using var response = await httpClient.PostAsJsonAsync("/api/Messaging/decompress", result, cancellationToken); ;
+            using var response = await httpClient.PostAsJsonAsync(ApiServices.API_MESSAGING_DECOMPRESS, result, cancellationToken); ;
 
             if (response.IsSuccessStatusCode)
             {
@@ -81,7 +82,7 @@ namespace OzoraSoft.Web
             httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
 
             var result = new Message() { Input = input };
-            using var response = await httpClient.PostAsJsonAsync("/api/Messaging/encrypt", result, cancellationToken); ;
+            using var response = await httpClient.PostAsJsonAsync(ApiServices.API_MESSAGING_ENCRYPT, result, cancellationToken); ;
 
             if (response.IsSuccessStatusCode)
             {
@@ -96,7 +97,7 @@ namespace OzoraSoft.Web
             httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
 
             var result = new Message() { Input = input };
-            using var response = await httpClient.PostAsJsonAsync("/api/Messaging/decrypt", result, cancellationToken); ;
+            using var response = await httpClient.PostAsJsonAsync(ApiServices.API_MESSAGING_DECRYPT, result, cancellationToken); ;
 
             if (response.IsSuccessStatusCode)
             {

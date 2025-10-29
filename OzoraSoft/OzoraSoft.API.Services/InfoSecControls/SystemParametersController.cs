@@ -9,7 +9,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace OzoraSoft.API.Services.Controllers
+namespace OzoraSoft.API.Services.InfoSecControls
 {
     [Route("api/[controller]")]
     [ApiController]

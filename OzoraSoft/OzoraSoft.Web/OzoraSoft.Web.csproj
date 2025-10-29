@@ -7,6 +7,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="Microsoft.AspNetCore.SignalR.Client" Version="9.0.10" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="9.0.0">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
@@ -19,6 +20,7 @@
     <ProjectReference Include="..\OzoraSoft.API.Utils\OzoraSoft.API.Utils.csproj" />
     <ProjectReference Include="..\OzoraSoft.Library.Enums\OzoraSoft.Library.Enums.csproj" />
     <ProjectReference Include="..\OzoraSoft.Library.Messaging\OzoraSoft.Library.Messaging.csproj" />
+    <ProjectReference Include="..\OzoraSoft.Library.Security\OzoraSoft.Library.Security.csproj" />
     <ProjectReference Include="..\OzoraSoft.ServiceDefaults\OzoraSoft.ServiceDefaults.csproj" />
   </ItemGroup>
 
