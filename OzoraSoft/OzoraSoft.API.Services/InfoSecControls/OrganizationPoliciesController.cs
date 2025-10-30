@@ -16,9 +16,9 @@ namespace OzoraSoft.API.Services.InfoSecControls
     [Authorize]
     public class OrganizationPoliciesController : ControllerBase
     {
-        private readonly OzoraSoftDBContext _context;
+        private readonly OzoraSoft_InfoSecControls_DBContext _context;
 
-        public OrganizationPoliciesController(OzoraSoftDBContext context)
+        public OrganizationPoliciesController(OzoraSoft_InfoSecControls_DBContext context)
         {
             _context = context;
         }

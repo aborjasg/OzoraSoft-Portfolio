@@ -1,4 +1,5 @@
-﻿using OzoraSoft.Library.Enums;
+﻿using OzoraSoft.Library.Enums.PictureMaker;
+using OzoraSoft.Library.Enums.Shared;
 using OzoraSoft.Library.PictureMaker.Models;
 using System;
 using System.Collections.Generic;

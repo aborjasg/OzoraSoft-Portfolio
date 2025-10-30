@@ -1,4 +1,5 @@
 ﻿using Newtonsoft.Json;
+using OzoraSoft.Library.Enums.Shared;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;

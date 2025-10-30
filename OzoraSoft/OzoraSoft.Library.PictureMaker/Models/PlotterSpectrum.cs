@@ -1,4 +1,4 @@
-﻿using OzoraSoft.Library.Enums;
+﻿using OzoraSoft.Library.Enums.PictureMaker;
 using OzoraSoft.Library.PictureMaker.Models;
 using SkiaSharp;
 using System;

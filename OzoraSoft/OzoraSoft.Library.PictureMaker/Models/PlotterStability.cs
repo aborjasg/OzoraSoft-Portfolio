@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using OzoraSoft.Library.PictureMaker.Models;
-using OzoraSoft.Library.Enums;
+using OzoraSoft.Library.Enums.PictureMaker;
 
 namespace OzoraSoft.Library.PictureMaker
 {

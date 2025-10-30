@@ -11,33 +11,23 @@ namespace OzoraSoft.Library.Messaging.UI_Components
     public class ToastService
     {
         // Event for showing toasts
-        public event Action<enmLogLevel, string, string, string, int> OnShow;
+        public event Action<enmLogLevel, string, string, string> OnShow;
 
         // Event for hiding toasts
         public event Action OnHide;
 
-        public const  int dismissAfterMax = 10;
-
         /// <summary>
         /// Shows a generic toast.
         /// </summary>
-        public void ShowToast(enmLogLevel type, string messageTitle, string messageSubtitle, string messageBody, int dismissAfter)
+        public void ShowToast(enmLogLevel type, string messageTitle, string messageSubtitle, string messageBody)
         {
-            if (dismissAfter < 0 || dismissAfter > dismissAfterMax)
-            {
-                dismissAfter = dismissAfterMax;
-            }
-            OnShow?.Invoke(type, messageTitle, messageSubtitle, messageBody, dismissAfter);
+            OnShow?.Invoke(type, messageTitle, messageSubtitle, messageBody);
         }
 
-        public void ShowToast(enmLogLevel type, string messageBody, int dismissAfter)
+        public void ShowToast(enmLogLevel type, string messageBody)
         {
-            if (dismissAfter < 0 || dismissAfter > dismissAfterMax)
-            {
-                dismissAfter = dismissAfterMax;
-            }
             var messageSubtitle = DateTime.Now.ToString(UtilsForMessages.DateTimeFormat_Short);
-            OnShow?.Invoke(type, type.ToString(), messageSubtitle, messageBody, dismissAfter);
+            OnShow?.Invoke(type, type.ToString(), messageSubtitle, messageBody);
         }
 
         /// <summary>

@@ -16,9 +16,9 @@ namespace OzoraSoft.API.Services.InfoSecControls
     [Authorize]
     public class SystemParametersController : ControllerBase
     {
-        private readonly OzoraSoftDBContext _context;
+        private readonly OzoraSoft_InfoSecControls_DBContext _context;
 
-        public SystemParametersController(OzoraSoftDBContext context)
+        public SystemParametersController(OzoraSoft_InfoSecControls_DBContext context)
         {
             _context = context;
         }

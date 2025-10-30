@@ -1,7 +1,9 @@
-﻿using Org.BouncyCastle.Asn1.Ocsp;
+﻿using Microsoft.AspNetCore.Mvc;
+using Org.BouncyCastle.Asn1.Ocsp;
+using OzoraSoft.API.Services.Models;
 using OzoraSoft.API.Utils.Models;
 using OzoraSoft.DataSources.InfoSecControls;
-using OzoraSoft.Library.Security;
+using OzoraSoft.DataSources.Shared;
 using OzoraSoft.Library.Security.Services;
 using System.Net.Http.Headers;
 using System.Net.Http.Json;
@@ -36,6 +38,12 @@ namespace OzoraSoft.Web
             return result!;
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="accessToken"></param>
+        /// <param name="cancellationToken"></param>
+        /// <returns></returns>
         public async Task<OrganizationPolicy[]> OrganizationPolicies_GetList(string accessToken, CancellationToken cancellationToken = default)
         {
             //TODO: Add pagination object for all the lists from DB. Take as reference previous project implementation
@@ -48,6 +56,26 @@ namespace OzoraSoft.Web
                 result = await response.Content.ReadFromJsonAsync<OrganizationPolicy[]>(cancellationToken: cancellationToken);
             }
             return result!;
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="accessToken"></param>
+        /// <param name="cancellationToken"></param>
+        /// <returns></returns>
+        public async Task<EventLog[]> EventLogs_GetList(EventLog_Filter filter, string accessToken, CancellationToken cancellationToken = default)
+        {
+            //TODO: Add pagination object for all the lists from DB. Take as reference previous project implementation
+            httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
+            var result = new EventLog[] { };
+            using var response = await httpClient.PostAsJsonAsync($"{ApiServices.API_EVENTLOG_LIST}", filter, cancellationToken);
+
+            if (response.IsSuccessStatusCode)
+            {
+                result = await response.Content.ReadFromJsonAsync<EventLog[]>(cancellationToken: cancellationToken);
+            }
+            return result!.OrderByDescending(x => x.process_datetime).ToArray();
         }
     }
 }

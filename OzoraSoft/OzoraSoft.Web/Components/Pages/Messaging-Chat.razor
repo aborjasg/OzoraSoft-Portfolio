@@ -14,16 +14,16 @@
 <PageTitle>OzoraSoft-Porfolio</PageTitle>
 
 <h3>Messaging</h3>
-<h4>Chat</h4>
+<h4>On-line Chat</h4>
 
-<div style="border: 1px solid darkgray; padding: 10px; width: 350px;">
+<div style="border: 1px solid darkgray; padding: 10px; width: 400px;">
     <div class="form-floating mb-3">
         <input type="email" class="form-control" id="floatingInput" placeholder="..." maxlength=20 @bind="userInput">
         <label for="floatingInput">User Name</label>
     </div>
     <div class="form-floating mb-3">        
-        <textarea class="form-control" aria-label="Message" placeholder="..." maxlength=100 @bind ="messageInput"></textarea>
-        <label for="floatingPassword">Message</label>
+        <textarea class="form-control h-auto" aria-label="Message" placeholder="..." maxlength=180 @bind="messageInput" @bind:event="oninput" rows="3"></textarea>
+        <label for="floatingPassword">Message (Length: @messageInput.Count() / @messageLengthMax)</label>
     </div>
     <div class="form-floating">
         <button type="button" class="btn btn-outline-primary" @onclick="Send" disabled="@(!IsConnected)">
@@ -68,6 +68,7 @@
     private List<string> _messages = [];
     private string userInput = "";
     private string messageInput = "";
+    private int messageLengthMax = 180;
 
     protected override async Task OnInitializedAsync()
     {
@@ -118,7 +119,7 @@
         }
         catch (Exception ex)
         {
-            ToastService.ShowToast(enmLogLevel.Warning, ex.Message, 5);
+            ToastService.ShowToast(enmLogLevel.Warning, ex.Message);
         }
     }
 
@@ -132,4 +133,5 @@
             await hubConnection.DisposeAsync();
         }
     }
+
 }

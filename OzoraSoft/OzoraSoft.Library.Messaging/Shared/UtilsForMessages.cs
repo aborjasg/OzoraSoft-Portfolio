@@ -22,6 +22,7 @@ namespace OzoraSoft.Library.Enums.Shared
 
         public const string DateTimeFormat_Standard = "yyyy-MM-dd_HH:mm:ss:fff";
         public const string DateTimeFormat_Short = "yyyy-MM-dd HH:mm";
+        public const string DateFormat_Short = "yyyy-MM-dd";
 
         /// <summary>
         /// Compresses a string and returns a deflate compressed, Base64 encoded string.

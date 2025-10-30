@@ -1,9 +1,11 @@
-﻿@page "/infoseccontrols-systemparameters"
-@using System.Collections
-@using OzoraSoft.DataSources.InfoSecControls
-@using OzoraSoft.Library.Enums.InfoSecControls;
+﻿@page "/event-logs"
+@using Microsoft.AspNetCore.SignalR.Client
+@using OzoraSoft.API.Services.Models
 @using OzoraSoft.Library.Enums.Shared
 @using OzoraSoft.Library.Messaging.UI_Components
+@using OzoraSoft.Library.Security.Services
+@using OzoraSoft.DataSources.Shared
+@using System.Collections
 @attribute [StreamRendering(true)]
 @attribute [OutputCache(Duration = 5)]
 @rendermode InteractiveServer
@@ -14,17 +16,11 @@
 
 <PageTitle>OzoraSoft-Porfolio</PageTitle>
 
-<h3>Information Security Controls</h3>
-<h4>System Parameters</h4>
+<h3>Event Logs</h3>
 
-<div style="width: 500px;">
-    <hr />
-    <select class="form-select" @bind="_selectedGroupId" style="width: 300px;">
-        @foreach (int item in Enum.GetValues(typeof(enumSystemParameterGroups)).Cast<int>().OrderBy(i => i))
-        {
-            <option value=@item selected=@(item == _selectedGroupId)>@((enumSystemParameterGroups)item)</option>
-        }
-    </select>
+<div style="width: 1000px;">
+    <hr />    
+    <InputDate @bind-Value="_selectedDate" />
     <button type="button" class="btn btn-outline-primary" @onclick="LoadList">
         <i class="bi bi-cloud-arrow-down"></i> Load
     </button>
@@ -38,19 +34,31 @@
     {
         <table class="table table-striped">
             <thead class="table-dark">
-                <tr>
-                    <th style="width: 80px">Group Id</th>
-                    <th style="width: 50px">Id</th>
-                    <th>Name</th>
+                <tr>                    
+                    <th>Date</th>
+                    <th>Project</th>
+                    <th>Module</th>
+                    <th>Entity</th>
+                    <th>Action</th>
+                    <th>Result</th>
+                    <th>Duration</th>
+                    <th>UserName</th>
+                    <th>IP Address</th>
                 </tr>
             </thead>
             <tbody>
-                @foreach (SystemParameter record in _list)
+                @foreach (EventLog record in _list)
                 {
-                    <tr>
-                        <td>@record.Group_Id</td>
-                        <td><b>@record.Id</b></td>
-                        <td>@record.Name</td>                    
+                    <tr>                        
+                        <td><b>@record.process_datetime</b></td>
+                        <td>@record.project_id</td>
+                        <td>@record.module_id</td>
+                        <td>@record.entity_id</td>
+                        <td>@record.action_id</td>
+                        <td>@record.action_result</td>
+                        <td>@record.process_duration</td>
+                        <td>@record.user_name</td>
+                        <td>@record.user_ip_address</td>
                     </tr>
                 }
             </tbody>
@@ -67,16 +75,16 @@
 </div>
 
 @code {
+    private DateTime _selectedDate { get; set; } = DateTime.Now;
     private string _messageBody = "";
     private string _status = "";
     private string _accessToken = "";
     private bool isLoading = false;
-    private IList _list = new List<SystemParameter>();
-    private int _selectedGroupId = Convert.ToInt16(enumSystemParameterGroups.AllGroups);
+    private IList _list = new List<EventLog>();
 
     protected void ResetResults()
     {
-        _list = new List<SystemParameter>();
+        _list = new List<EventLog>();
         _status = "";
     }
 
@@ -93,8 +101,12 @@
         {
             ResetResults();
             isLoading = true;
-            _list = await ApiServicesClient.SystemParameters_GetList(_selectedGroupId, _accessToken);
-            Console.WriteLine($"Retrieved {_list.Count} row(s) for Group ID {_selectedGroupId}");
+            var filter = new EventLog_Filter()
+            {
+                process_datetime = _selectedDate.ToString(UtilsForMessages.DateFormat_Short)
+            };
+            _list = await ApiServicesClient.EventLogs_GetList(filter, _accessToken);
+            Console.WriteLine($"Retrieved {_list.Count} row(s)");
             _status = $"Rows: {_list.Count}";
             _messageBody = _status;
             isLoading = false;

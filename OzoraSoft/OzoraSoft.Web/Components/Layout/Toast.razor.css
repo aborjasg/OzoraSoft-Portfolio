@@ -3,7 +3,7 @@
     bottom: 20px;
     right: 20px;
     z-index: 1000;
-    animation: slide-in 0.5s ease-out, slide-out 0.5s ease-in 5s forwards; /*slide-in 0.5s ease-in-out;*/
+    animation: slide-in 0.5s ease-out, slide-out 0.5s ease-in 3s forwards;
     border: 1px solid darkgray;
     border-radius: 1px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);

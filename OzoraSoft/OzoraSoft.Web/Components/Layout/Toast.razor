@@ -8,7 +8,7 @@
 @if (ShowMessage)
 {
     <div class="toast-message-container ">
-        <div class="toast-message-header">
+        <div class="toast-message-header" role="alert" aria-live="assertive" aria-atomic="true" data-bs-animation="true">
             <strong class="me-auto">@MessageTitle</strong>
             <small>@MessageSubtitle</small>            
             <button class="toast-close-button" @onclick="HideMessage">
@@ -32,7 +32,7 @@
     private string MessageTitle { get; set; } = string.Empty;
     private string MessageSubtitle { get; set; } = string.Empty;
     private string MessageBody { get; set; } = string.Empty;
-
+    private const int dismissAfter = 4;
 
     // Determines CSS class based on message type
     private string MessageTypeClass => MessageType switch
@@ -51,7 +51,7 @@
         ToastService.OnHide += HideMessage;
     }
 
-    private async void ShowToast(enmLogLevel type, string messageTitle, string messageSubtitle, string messageBody, int dismissAfter)
+    private async void ShowToast(enmLogLevel type, string messageTitle, string messageSubtitle, string messageBody)
     {
         MessageType = type;
         MessageTitle = messageTitle;

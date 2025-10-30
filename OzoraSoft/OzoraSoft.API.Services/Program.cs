@@ -1,8 +1,8 @@
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
-using Orestes.SharedLibrary;
 using OzoraSoft.DataSources;
+using OzoraSoft.Library.Enums.Shared;
 using OzoraSoft.Library.Security;
 using System.Text;
 
@@ -35,11 +35,19 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
 //builder.Services.Configure<JwtSettings>(builder.Configuration.GetSection("JwtSettings"));
 builder.Services.AddSingleton<IJwtSettings, JwtSettings>(e => builder.Configuration.GetSection("JwtSettings").Get<JwtSettings>()!);
 
-builder.Services.AddDbContext<OzoraSoftDBContext>(options =>
+// DB Contexts
+builder.Services.AddDbContext<OzoraSoft_InfoSecControls_DBContext>(options =>
     options.UseMySql(
-            UtilsForMessages.Decompress(builder.Configuration.GetConnectionString("OzoraSoftInfoSecControlsConnection")!),
-            ServerVersion.AutoDetect(UtilsForMessages.Decompress(builder.Configuration.GetConnectionString("OzoraSoftInfoSecControlsConnection")!))
+            UtilsForMessages.Decompress(builder.Configuration.GetConnectionString("OzoraSoft_InfoSecControls_Connection")!),
+            ServerVersion.AutoDetect(UtilsForMessages.Decompress(builder.Configuration.GetConnectionString("OzoraSoft_InfoSecControls_Connection")!))
         ));
+
+builder.Services.AddDbContext<OzoraSoft_Shared_DBContext>(options =>
+    options.UseMySql(
+            UtilsForMessages.Decompress(builder.Configuration.GetConnectionString("OzoraSoft_Shared_Connection")!),
+            ServerVersion.AutoDetect(UtilsForMessages.Decompress(builder.Configuration.GetConnectionString("OzoraSoft_Shared_Connection")!))
+        ));
+
 
 var app = builder.Build();
 

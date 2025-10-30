@@ -15,6 +15,8 @@ namespace OzoraSoft.Library.Security.Services
         public const string API_MESSAGING_DECOMPRESS = "/api/Messaging/decompress";
         public const string API_MESSAGING_ENCRYPT = "/api/Messaging/encrypt";
         public const string API_MESSAGING_DECRYPT = "/api/Messaging/decrypt";
+        public const string API_EVENTLOG = "/api/EventLogs";
+        public const string API_EVENTLOG_LIST = "/api/EventLogs/list";
         public const string API_CHATHUB_ENDPOINT = "/chathub";
         public const string API_ERROR_ENDPOINT = "/Error";
     }
