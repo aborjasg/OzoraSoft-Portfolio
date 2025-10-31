@@ -18,7 +18,7 @@
 
 <h3>Event Logs</h3>
 
-<div style="width: 1000px;">
+<div style="width: 1200px;">
     <hr />    
     <InputDate @bind-Value="_selectedDate" />
     <button type="button" class="btn btn-outline-primary" @onclick="LoadList">
@@ -41,7 +41,7 @@
                     <th>Entity</th>
                     <th>Action</th>
                     <th>Result</th>
-                    <th>Duration</th>
+                    <th>Duration (ms)</th>
                     <th>UserName</th>
                     <th>IP Address</th>
                 </tr>
@@ -51,12 +51,12 @@
                 {
                     <tr>                        
                         <td><b>@record.process_datetime</b></td>
-                        <td>@record.project_id</td>
-                        <td>@record.module_id</td>
-                        <td>@record.entity_id</td>
-                        <td>@record.action_id</td>
+                        <td>@((enumEventLogProjects)record.project_id)</td>
+                        <td>@((enumEventLogModules)record.module_id)</td>
+                        <td>@((enumEventLogControllers)record.controller_id)</td>
+                        <td>@((enumEventLogActions)record.action_id)</td>
                         <td>@record.action_result</td>
-                        <td>@record.process_duration</td>
+                        <td>@(Math.Round(record.process_duration, 2))</td>
                         <td>@record.user_name</td>
                         <td>@record.user_ip_address</td>
                     </tr>

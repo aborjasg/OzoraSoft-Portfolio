@@ -23,16 +23,17 @@ namespace OzoraSoft.API.Services.Shared
             _context = context;
         }
 
-        // GET: api/EventLogs
-        [HttpGet]
-        public async Task<ActionResult<IEnumerable<EventLog>>> GetEventLogs()
+        // GET: api/EventLogs/id
+        [HttpGet("{id}")]
+        public async Task<ActionResult<EventLog>> GetOne(int id)
         {
-            return await _context.EventLogs.ToListAsync();
+            var result = await _context.EventLogs.Where(x => x.id == id).FirstOrDefaultAsync();
+            return result!;
         }
 
-        // GET: api/EventLogs/5
+        // GET: api/EventLogs/
         [HttpPost("list")]
-        public async Task<ActionResult<IEnumerable<EventLog>>> PostEventLogList([FromBody] EventLog_Filter filter)
+        public async Task<ActionResult<IEnumerable<EventLog>>> PostList([FromBody] EventLog_Filter filter)
         {
             var result = new List<EventLog>();
             var query = _context.EventLogs.AsQueryable();
@@ -41,7 +42,7 @@ namespace OzoraSoft.API.Services.Shared
             result = await query.Where(el =>
                 (filter.project_id == 0 || el.project_id == filter.project_id) &&
                 (filter.module_id == 0 || el.module_id == filter.module_id) &&
-                (filter.entity_id == 0 || el.entity_id == filter.entity_id) &&
+                (filter.controller_id == 0 || el.controller_id == filter.controller_id) &&
                 (filter.action_id == 0 || el.action_id == filter.action_id) &&
                 (string.IsNullOrEmpty(filter.process_datetime) || el.process_datetime.Date  == dt_process_date.Date) &&
                 (string.IsNullOrEmpty(filter.user_name) || el.user_name.Contains(filter.user_name))
@@ -54,12 +55,12 @@ namespace OzoraSoft.API.Services.Shared
         // POST: api/EventLogs
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
-        public async Task<ActionResult<EventLog>> PostEventLog(EventLog eventLog)
+        public async Task<ActionResult<int>> PostRecord([FromBody] EventLog eventLog)
         {
             _context.EventLogs.Add(eventLog);
             await _context.SaveChangesAsync();
 
-            return CreatedAtAction("GetEventLog", new { id = eventLog.id }, eventLog);
+            return eventLog.id;
         }
 
 

@@ -25,14 +25,14 @@ namespace OzoraSoft.API.Services.InfoSecControls
 
         // GET: api/OrganizationPolicies
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<OrganizationPolicy>>> GetOrganizationPolicies()
+        public async Task<ActionResult<IEnumerable<OrganizationPolicy>>> GetList()
         {
             return await _context.OrganizationPolicies.ToListAsync();
         }
 
         // GET: api/OrganizationPolicies/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<OrganizationPolicy>> GetOrganizationPolicy(int id)
+        public async Task<ActionResult<OrganizationPolicy>> GetOne(int id)
         {
             var organizationPolicy = await _context.OrganizationPolicies.FindAsync(id);
 

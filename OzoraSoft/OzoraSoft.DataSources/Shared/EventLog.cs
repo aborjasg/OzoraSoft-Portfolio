@@ -11,10 +11,10 @@ namespace OzoraSoft.DataSources.Shared
         public int id { get; set; } = 0;
         public int project_id {  get; set; } = 0;
         public int module_id {  get; set; } = 0;
-        public int entity_id {  get; set; } = 0;
+        public int controller_id {  get; set; } = 0;
         public int action_id {  get; set; } = 0;
         public string action_result {  get; set; } = "";
-        public float process_duration { get; set; } = 0;
+        public double process_duration { get; set; } = 0;
         public DateTime process_datetime { get; set; } = DateTime.Now;
         public byte visible { get; set; } = 1;
         public string user_name { get; set; } = "";

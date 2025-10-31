@@ -77,5 +77,19 @@ namespace OzoraSoft.Web
             }
             return result!.OrderByDescending(x => x.process_datetime).ToArray();
         }
+
+        public async Task<int> EventLogs_Add(EventLog record, string accessToken, CancellationToken cancellationToken = default)
+        {
+            httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
+            int result = 0;
+
+            using var response = await httpClient.PostAsJsonAsync($"{ApiServices.API_EVENTLOG}", record, cancellationToken);
+
+            if (response.IsSuccessStatusCode)
+            {
+                result = await response.Content.ReadFromJsonAsync<int>(cancellationToken: cancellationToken);
+            }
+            return result!;
+        }
     }
 }
