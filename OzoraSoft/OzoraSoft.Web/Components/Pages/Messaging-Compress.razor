@@ -1,0 +1,88 @@
+﻿@page "/messaging-compress"
+@attribute [StreamRendering(true)]
+@attribute [OutputCache(Duration = 5)]
+@rendermode InteractiveServer
+
+@inject OzoraSoft_API_Util_Client ApiUtilsClient
+
+<PageTitle>OzoraSoft-Porfolio</PageTitle>
+
+<h3>Messaging</h3>
+<h4>Compress/decompress texts</h4>
+
+<div style="width: 500px;">
+    <hr />
+    <div>
+        <textarea class="form-control" aria-label="Input" @bind="inputText" style="width: 500px;" placeholder="Input"></textarea>
+    </div>
+    <div>
+        <button type="button" class="btn btn-outline-primary" @onclick="CompressText">
+            <i class="bi bi-envelope-check"></i> Compress
+        </button>
+        <button type="button" class="btn btn-outline-primary" @onclick="UncompressText">
+            <i class="bi bi-envelope-open"></i> Decompress
+        </button>
+        <button type="button" class="btn btn-outline-dark" @onclick="ResetResults">
+            <i class="bi bi-x-circle"></i> Reset
+        </button>
+    </div>
+    <div>   
+        <textarea class="form-control" aria-label="Output" @bind="outputText" style="width: 500px; font-weight: bold;" placeholder="Output"></textarea>
+    </div>
+    
+</div>
+
+@code {
+    private string accessToken = "";
+    private string inputText = "";
+    private string outputText = "";
+
+    protected override async Task OnInitializedAsync()
+    {        
+        var result = await ApiUtilsClient.AccessToken_Get();
+        accessToken = result.access_token;
+    }
+
+    protected void ResetResults()
+    {
+        inputText = "";
+        outputText = "";
+    }
+
+    protected async Task CompressText()
+    {
+        try
+        {
+            outputText = await ApiUtilsClient.Messaging_CompressText(inputText, accessToken);
+        }
+        catch (HttpRequestException hre)
+        {
+            outputText = $"HTTP error: {hre.Message}";
+            Console.WriteLine($"HTTP error: {hre.Message}");
+        }
+        catch (Exception ex)
+        {
+            outputText = $"Unexpected: {ex}";
+            Console.WriteLine($"Unexpected: {ex}");
+        }
+    }
+
+    protected async Task UncompressText()
+    {
+        try
+        {     
+            outputText = await ApiUtilsClient.Messaging_UncompressText(inputText, accessToken);
+        }
+        catch (HttpRequestException hre)
+        {
+            outputText = $"HTTP error: {hre.Message}";
+            Console.WriteLine($"HTTP error: {hre.Message}");
+        }
+        catch (Exception ex)
+        {
+            outputText = $"Unexpected: {ex}";
+            Console.WriteLine($"Unexpected: {ex}");
+        }
+    }
+
+}

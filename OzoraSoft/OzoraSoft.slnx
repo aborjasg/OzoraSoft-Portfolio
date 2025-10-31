@@ -1,0 +1,26 @@
+<Solution>
+  <Folder Name="/0-SharedLibraries/">
+    <Project Path="OzoraSoft.Library.Enums/OzoraSoft.Library.Enums.csproj" Id="fda84c99-b965-42f2-b4a0-22950a4f3f50" />
+    <Project Path="OzoraSoft.Library.Messaging/OzoraSoft.Library.Messaging.csproj" Id="95eac696-9b6a-43f2-a4ad-bdf015817ecb" />
+    <Project Path="OzoraSoft.Library.PictureMaker/OzoraSoft.Library.PictureMaker.csproj" Id="c71f9a87-4a99-4056-8523-efb865226760" />
+    <Project Path="OzoraSoft.Library.Security/OzoraSoft.Library.Security.csproj" Id="86f0cee3-47b4-483d-aa3f-c27873cd5432" />
+  </Folder>
+  <Folder Name="/1-DataSources/">
+    <Project Path="OzoraSoft.DataSources/OzoraSoft.DataSources.csproj" Id="d7ea9903-faa0-4eb3-a4e5-9d005db7ea0b" />
+  </Folder>
+  <Folder Name="/2-MicroServices/">
+    <Project Path="OzoraSoft.API.Services/OzoraSoft.API.Services.csproj" />
+    <Project Path="OzoraSoft.API.Utils/OzoraSoft.API.Utils.csproj" />
+  </Folder>
+  <Folder Name="/3-WebApps/">
+    <Project Path="OzoraSoft.AppHost/OzoraSoft.AppHost.csproj" />
+    <Project Path="OzoraSoft.ServiceDefaults/OzoraSoft.ServiceDefaults.csproj" />
+    <Project Path="OzoraSoft.Web/OzoraSoft.Web.csproj" />
+  </Folder>
+  <Folder Name="/4-DesktopApps/">
+    <Project Path="OzoraSoft.Console/OzoraSoft.Console.csproj" Id="48b3cab7-4cc9-4b36-8e88-413f0cdb8e3c" />
+  </Folder>
+  <Folder Name="/5-UnitTests/">
+    <Project Path="OzoraSoft.Tests/OzoraSoft.Tests.csproj" />
+  </Folder>
+</Solution>

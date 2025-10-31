@@ -1,0 +1,137 @@
+﻿@page "/messaging-chat"
+@attribute [StreamRendering(true)]
+@attribute [OutputCache(Duration = 5)]
+@rendermode InteractiveServer
+
+@using Microsoft.AspNetCore.SignalR.Client
+@using OzoraSoft.Library.Enums.Shared
+@using OzoraSoft.Library.Messaging.UI_Components
+@using OzoraSoft.Library.Security.Services
+@inject NavigationManager Navigation
+@inject ToastService ToastService
+@implements IAsyncDisposable
+
+<PageTitle>OzoraSoft-Porfolio</PageTitle>
+
+<h3>Messaging</h3>
+<h4>On-line Chat</h4>
+
+<div style="border: 1px solid darkgray; padding: 10px; width: 400px;">
+    <div class="form-floating mb-3">
+        <input type="email" class="form-control" id="floatingInput" placeholder="..." maxlength=20 @bind="userInput">
+        <label for="floatingInput">User Name</label>
+    </div>
+    <div class="form-floating mb-3">        
+        <textarea class="form-control h-auto" aria-label="Message" placeholder="..." maxlength=180 @bind="messageInput" @bind:event="oninput" rows="3"></textarea>
+        <label for="floatingPassword">Message (Length: @messageInput.Count() / @messageLengthMax)</label>
+    </div>
+    <div class="form-floating">
+        <button type="button" class="btn btn-outline-primary" @onclick="Send" disabled="@(!IsConnected)">
+            <i class="bi bi-send-fill"</i> Send
+        </button>
+        <button type="button" class="btn btn-outline-dark" @onclick="ResetResults">
+            <i class="bi bi-x-circle"></i> Reset
+        </button>
+    </div>
+</div>
+
+<hr>
+
+<div class="table">
+    <div class="row">
+        <div class="col">
+            <h5>Online Users</h5>
+            <ul id="usersList">
+                @foreach (var user in _users)
+                {
+                    <li>@user</li>
+                }
+            </ul>
+        </div>
+        <div class="col">
+            <h5>Received Messages</h5>
+            <ul id="messagesList">
+                @foreach (var message in _messages)
+                {
+                    <li>@message</li>
+                }
+            </ul>
+        </div>
+    </div>
+</div>
+    
+
+
+@code {
+    private HubConnection? hubConnection;
+    private List<string> _users = [];
+    private List<string> _messages = [];
+    private string userInput = "";
+    private string messageInput = "";
+    private int messageLengthMax = 180;
+
+    protected override async Task OnInitializedAsync()
+    {
+        hubConnection = new HubConnectionBuilder()
+            .WithUrl(Navigation.ToAbsoluteUri(ApiServices.API_CHATHUB_ENDPOINT))
+            .Build();
+
+        hubConnection.On<string, string>("ReceiveMessage", (user, message) =>
+        {
+            if(!_users.Contains(user))
+                _users.Add(user);
+            if (_messages.Count >= 10)
+                _messages.RemoveAt(0);
+            _messages.Add(UtilsForMessages.MaskedwithTimestamp(message, "Info", user));
+            InvokeAsync(StateHasChanged);
+        });
+
+        await hubConnection.StartAsync();
+    }
+
+    protected void ResetResults()
+    {
+        userInput = "";
+        messageInput = "";
+        _users = [];
+        _messages = [];
+    }
+
+    private async Task Send()
+    {
+        try
+        {
+            if (hubConnection is not null)
+            {
+                if (!string.IsNullOrEmpty(userInput) && !string.IsNullOrEmpty(userInput))
+                {
+                    await hubConnection.SendAsync("SendMessage", userInput, messageInput);
+                }
+                else
+                {
+                    throw new Exception("Empty User/Message");
+                }
+            }
+            else
+            {
+                throw new Exception("Hub is not running");
+            }
+        }
+        catch (Exception ex)
+        {
+            ToastService.ShowToast(enmLogLevel.Warning, ex.Message);
+        }
+    }
+
+    public bool IsConnected =>
+        hubConnection?.State == HubConnectionState.Connected;
+
+    public async ValueTask DisposeAsync()
+    {
+        if (hubConnection is not null)
+        {
+            await hubConnection.DisposeAsync();
+        }
+    }
+
+}

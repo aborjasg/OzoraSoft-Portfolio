@@ -1,0 +1,120 @@
+﻿@page "/event-logs"
+@using Microsoft.AspNetCore.SignalR.Client
+@using OzoraSoft.API.Services.Models
+@using OzoraSoft.Library.Enums.Shared
+@using OzoraSoft.Library.Messaging.UI_Components
+@using OzoraSoft.Library.Security.Services
+@using OzoraSoft.DataSources.Shared
+@using System.Collections
+@attribute [StreamRendering(true)]
+@attribute [OutputCache(Duration = 5)]
+@rendermode InteractiveServer
+
+@inject OzoraSoft_API_Util_Client ApiUtilsClient
+@inject OzoraSoft_API_Services_Client ApiServicesClient
+@inject ToastService ToastService
+
+<PageTitle>OzoraSoft-Porfolio</PageTitle>
+
+<h3>Event Logs</h3>
+
+<div style="width: 1200px;">
+    <hr />    
+    <InputDate @bind-Value="_selectedDate" />
+    <button type="button" class="btn btn-outline-primary" @onclick="LoadList">
+        <i class="bi bi-cloud-arrow-down"></i> Load
+    </button>
+    <button type="button" class="btn btn-outline-dark" @onclick="ResetResults">
+        <i class="bi bi-x-circle"></i> Reset
+    </button>    
+    
+    <span>@_status</span>
+    <hr />
+    @if (_list.Count > 0)
+    {
+        <table class="table table-striped">
+            <thead class="table-dark">
+                <tr>                    
+                    <th>Date</th>
+                    <th>Project</th>
+                    <th>Module</th>
+                    <th>Entity</th>
+                    <th>Action</th>
+                    <th>Result</th>
+                    <th>Duration (ms)</th>
+                    <th>UserName</th>
+                    <th>IP Address</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (EventLog record in _list)
+                {
+                    <tr>                        
+                        <td><b>@record.process_datetime</b></td>
+                        <td>@((enumEventLogProjects)record.project_id)</td>
+                        <td>@((enumEventLogModules)record.module_id)</td>
+                        <td>@((enumEventLogControllers)record.controller_id)</td>
+                        <td>@((enumEventLogActions)record.action_id)</td>
+                        <td>@record.action_result</td>
+                        <td>@(Math.Round(record.process_duration, 2))</td>
+                        <td>@record.user_name</td>
+                        <td>@record.user_ip_address</td>
+                    </tr>
+                }
+            </tbody>
+        </table>        
+    }
+    
+    @if (isLoading)
+    {
+        <div class="spinner-border" role="status">
+            <span class="visually-hidden">Loading...</span>
+        </div>
+    }
+
+</div>
+
+@code {
+    private DateTime _selectedDate { get; set; } = DateTime.Now;
+    private string _messageBody = "";
+    private string _status = "";
+    private string _accessToken = "";
+    private bool isLoading = false;
+    private IList _list = new List<EventLog>();
+
+    protected void ResetResults()
+    {
+        _list = new List<EventLog>();
+        _status = "";
+    }
+
+    protected override async Task OnInitializedAsync()
+    {
+        // Get access token
+        var result = await ApiUtilsClient.AccessToken_Get();
+        _accessToken = result.access_token;
+    }
+
+    protected async Task LoadList()
+    {
+        try
+        {
+            ResetResults();
+            isLoading = true;
+            var filter = new EventLog_Filter()
+            {
+                process_datetime = _selectedDate.ToString(UtilsForMessages.DateFormat_Short)
+            };
+            _list = await ApiServicesClient.EventLogs_GetList(filter, _accessToken);
+            Console.WriteLine($"Retrieved {_list.Count} row(s)");
+            _status = $"Rows: {_list.Count}";
+            _messageBody = _status;
+            isLoading = false;
+            ToastService.ShowToast(enmLogLevel.Info, _messageBody);
+        }
+        catch (Exception ex)
+        {
+            ToastService.ShowToast(enmLogLevel.Warning, ex.Message);
+        }
+    }
+}

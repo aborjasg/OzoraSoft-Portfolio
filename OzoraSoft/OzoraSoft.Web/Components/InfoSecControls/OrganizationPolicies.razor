@@ -1,0 +1,116 @@
+﻿@page "/infoseccontrols-organizationpolicies"
+@using System.Collections
+@using OzoraSoft.DataSources.InfoSecControls
+@using OzoraSoft.DataSources.Shared
+@using OzoraSoft.Library.Enums.InfoSecControls;
+@using OzoraSoft.Library.Enums.Shared
+@using OzoraSoft.Library.Messaging.UI_Components
+@attribute [StreamRendering(true)]
+@attribute [OutputCache(Duration = 5)]
+@rendermode InteractiveServer
+
+@inject OzoraSoft_API_Util_Client ApiUtilsClient
+@inject OzoraSoft_API_Services_Client ApiServicesClient
+@inject ToastService ToastService
+
+<PageTitle>OzoraSoft-Porfolio</PageTitle>
+
+<h3>Information Security Controls</h3>
+<h4>Organization Policies</h4>
+
+<div style="width: 1200px;">
+    <hr />
+    <button type="button" class="btn btn-outline-primary" @onclick="LoadList">
+        <i class="bi bi-cloud-arrow-down"></i> Load
+    </button>
+    <button type="button" class="btn btn-outline-dark" @onclick="ResetResults">
+        <i class="bi bi-x-circle"></i> Reset
+    </button>    
+    
+    <span>@_status</span>
+    <hr />
+    @if (_list.Count > 0)
+    {
+        <table class="table table-striped">
+            <thead class="table-dark">
+                <tr>
+                    <th style="width: 30px">Id</th>
+                    <th style="width: 50px">Code</th>
+                    <th style="width: 200px;">Name</th>
+                    <th style="width: 100px;">Control_Type</th>
+                    <th style="width: 100px;">Information_Security_Properties</th>
+                    <th style="width: 100px;">Cybersecurity_Concepts</th>                    
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (OrganizationPolicy record in _list)
+                {
+                    <tr>
+                        <td>@record.Id</td>
+                        <td><b>@record.Code</b></td>
+                        <td><b>@record.Name</b></td>
+                        <td>@record.Control_Type</td>
+                        <td>@record.Information_Security_Properties</td>
+                        <td>@record.Cybersecurity_Concepts</td>
+                    </tr>
+                }
+            </tbody>
+        </table>        
+    }
+    
+    @if (isLoading)
+    {
+        <div class="spinner-border" role="status">
+            <span class="visually-hidden">Loading...</span>
+        </div>
+    }
+
+</div>
+
+@code {
+    private string _messageBody = "";
+    private string _status = "";
+    private string _accessToken = "";
+    private bool isLoading = false;
+    private IList _list = new List<OrganizationPolicy>();
+
+    protected void ResetResults()
+    {
+        _list = new List<OrganizationPolicy>();
+        _status = "";
+    }
+
+    protected override async Task OnInitializedAsync()
+    {
+        // Get access token
+        var result = await ApiUtilsClient.AccessToken_Get();
+        _accessToken = result.access_token;
+    }
+
+    protected async Task LoadList()
+    {
+        var processDate_Start = DateTime.Now;
+        ResetResults();
+        isLoading = true;
+        _list = await ApiServicesClient.OrganizationPolicies_GetList(_accessToken);        
+        _status = $"Rows: {_list.Count}";
+        _messageBody = _status;
+        isLoading = false;
+        ToastService.ShowToast(enmLogLevel.Info, _messageBody);
+                
+        var process_duration = (DateTime.Now - processDate_Start).TotalMilliseconds;
+        var resultId = ApiServicesClient.EventLogs_Add(new EventLog()
+        {
+            project_id = (int)enumEventLogProjects.OzoraSoft_Web,
+            module_id = (int)enumEventLogModules.InfoSecControls,
+            controller_id = (int)enumEventLogControllers.InfoSecControls_OrganizationPolicies,
+            action_id = (int)enumEventLogActions.List,
+            action_result = _status,
+            process_duration = process_duration,
+            process_datetime = processDate_Start,
+            user_name = "Alex BG",
+            user_ip_address = "127.0.0.1"
+        }, _accessToken);
+        Console.WriteLine($"Retrieved {_list.Count} row(s) [id={resultId}]");
+    }
+}
