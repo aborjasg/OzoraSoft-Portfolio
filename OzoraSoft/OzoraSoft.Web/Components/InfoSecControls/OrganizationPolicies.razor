@@ -89,28 +89,35 @@
 
     protected async Task LoadList()
     {
-        var processDate_Start = DateTime.Now;
-        ResetResults();
-        isLoading = true;
-        _list = await ApiServicesClient.OrganizationPolicies_GetList(_accessToken);        
-        _status = $"Rows: {_list.Count}";
-        _messageBody = _status;
-        isLoading = false;
-        ToastService.ShowToast(enmLogLevel.Info, _messageBody);
-                
-        var process_duration = (DateTime.Now - processDate_Start).TotalMilliseconds;
-        var resultId = ApiServicesClient.EventLogs_Add(new EventLog()
+        try
         {
-            project_id = (int)enumEventLogProjects.OzoraSoft_Web,
-            module_id = (int)enumEventLogModules.InfoSecControls,
-            controller_id = (int)enumEventLogControllers.InfoSecControls_OrganizationPolicies,
-            action_id = (int)enumEventLogActions.List,
-            action_result = _status,
-            process_duration = process_duration,
-            process_datetime = processDate_Start,
-            user_name = "Alex BG",
-            user_ip_address = "127.0.0.1"
-        }, _accessToken);
-        Console.WriteLine($"Retrieved {_list.Count} row(s) [id={resultId}]");
+            var processDateStart = DateTime.Now;
+            ResetResults();
+            isLoading = true;
+            _list = await ApiServicesClient.OrganizationPolicies_GetList(_accessToken);
+            _status = $"Rows: {_list.Count}";
+            _messageBody = _status;
+            isLoading = false;
+            ToastService.ShowToast(enmLogLevel.Info, _messageBody);
+
+            var processDuration = (DateTime.Now - processDateStart).TotalMilliseconds;
+            var resultId = ApiServicesClient.EventLogs_Add(new EventLog()
+                {
+                    project_id = (int)enumEventLogProjects.OzoraSoft_Web,
+                    module_id = (int)enumEventLogModules.InfoSecControls,
+                    controller_id = (int)enumEventLogControllers.InfoSecControls_OrganizationPolicies,
+                    action_id = (int)enumEventLogActions.List,
+                    action_result = _status,
+                    process_duration = processDuration,
+                    process_datetime = processDateStart,
+                    user_name = "Alex BG",
+                    user_ip_address = "127.0.0.1"
+                }, _accessToken);
+            Console.WriteLine($"EventLog Id={resultId}]");
+        }
+        catch (Exception ex)
+        {
+            ToastService.ShowToast(enmLogLevel.Warning, ex.Message);
+        }
     }
 }

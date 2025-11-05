@@ -12,6 +12,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\OzoraSoft.DataSources\OzoraSoft.DataSources.csproj" />
     <ProjectReference Include="..\OzoraSoft.Library.Enums\OzoraSoft.Library.Enums.csproj" />
   </ItemGroup>
 

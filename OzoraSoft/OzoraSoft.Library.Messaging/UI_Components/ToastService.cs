@@ -15,7 +15,7 @@ namespace OzoraSoft.Library.Messaging.UI_Components
 
         // Event for hiding toasts
         public event Action OnHide;
-
+        
         /// <summary>
         /// Shows a generic toast.
         /// </summary>

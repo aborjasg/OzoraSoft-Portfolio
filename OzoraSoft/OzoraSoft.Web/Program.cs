@@ -47,6 +47,7 @@ builder.Services.AddSingleton(loginModel!);
 
 // UI Components
 builder.Services.AddSingleton<ToastService>();
+builder.Services.AddSingleton<EventLogService>();
 
 
 var app = builder.Build();

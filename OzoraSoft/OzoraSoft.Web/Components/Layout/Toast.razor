@@ -1,9 +1,12 @@
-﻿@using OzoraSoft.Library.Enums.Shared
+﻿@using OzoraSoft.DataSources.Shared
+@using OzoraSoft.Library.Enums.Shared
 @using OzoraSoft.Library.Messaging.UI_Components
 @attribute [StreamRendering(true)]
 @attribute [OutputCache(Duration = 5)]
 @rendermode InteractiveServer
+@inject OzoraSoft_API_Services_Client ApiServicesClient
 @inject ToastService ToastService
+@inject EventLogService EventLogService
 
 @if (ShowMessage)
 {
