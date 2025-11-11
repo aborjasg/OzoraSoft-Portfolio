@@ -11,7 +11,7 @@ namespace OzoraSoft.Library.Messaging.UI_Components
     public class ToastService
     {
         // Event for showing toasts
-        public event Action<enmLogLevel, string, string, string> OnShow;
+        public event Action<enumLogLevel, string, string, string> OnShow;
 
         // Event for hiding toasts
         public event Action OnHide;
@@ -19,12 +19,12 @@ namespace OzoraSoft.Library.Messaging.UI_Components
         /// <summary>
         /// Shows a generic toast.
         /// </summary>
-        public void ShowToast(enmLogLevel type, string messageTitle, string messageSubtitle, string messageBody)
+        public void ShowToast(enumLogLevel type, string messageTitle, string messageSubtitle, string messageBody)
         {
             OnShow?.Invoke(type, messageTitle, messageSubtitle, messageBody);
         }
 
-        public void ShowToast(enmLogLevel type, string messageBody)
+        public void ShowToast(enumLogLevel type, string messageBody)
         {
             var messageSubtitle = DateTime.Now.ToString(UtilsForMessages.DateTimeFormat_Short);
             OnShow?.Invoke(type, type.ToString(), messageSubtitle, messageBody);

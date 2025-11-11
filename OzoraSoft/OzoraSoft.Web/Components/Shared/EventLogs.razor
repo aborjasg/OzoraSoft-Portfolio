@@ -51,10 +51,10 @@
                 {
                     <tr>                        
                         <td><b>@record.process_datetime</b></td>
-                        <td>@((enumEventLogProjects)record.project_id)</td>
-                        <td>@((enumEventLogModules)record.module_id)</td>
-                        <td>@((enumEventLogControllers)record.controller_id)</td>
-                        <td>@((enumEventLogActions)record.action_id)</td>
+                        <td>@((enumEventLogProject)record.project_id)</td>
+                        <td>@((enumEventLogModule)record.module_id)</td>
+                        <td>@((enumEventLogController)record.controller_id)</td>
+                        <td>@((enumEventLogAction)record.action_id)</td>
                         <td>@record.action_result</td>
                         <td>@(Math.Round(record.process_duration, 2))</td>
                         <td>@record.user_name</td>
@@ -110,11 +110,11 @@
             _status = $"Rows: {_list.Count}";
             _messageBody = _status;
             isLoading = false;
-            ToastService.ShowToast(enmLogLevel.Info, _messageBody);
+            ToastService.ShowToast(enumLogLevel.Info, _messageBody);
         }
         catch (Exception ex)
         {
-            ToastService.ShowToast(enmLogLevel.Warning, ex.Message);
+            ToastService.ShowToast(enumLogLevel.Warning, ex.Message);
         }
     }
 }

@@ -12,7 +12,6 @@
 @inject OzoraSoft_API_Util_Client ApiUtilsClient
 @inject OzoraSoft_API_Services_Client ApiServicesClient
 @inject ToastService ToastService
-@inject EventLogService EventLogService
 
 <PageTitle>OzoraSoft-Porfolio</PageTitle>
 
@@ -100,15 +99,15 @@
             _status = $"Rows: {_list.Count}";
             _messageBody = _status;
             isLoading = false;
-            ToastService.ShowToast(enmLogLevel.Info, _messageBody);
+            ToastService.ShowToast(enumLogLevel.Info, _messageBody);
 
             var processDuration = (DateTime.Now - processDateStart).TotalMilliseconds;
             var resultId = ApiServicesClient.EventLogs_Add(new EventLog()
             {
-                project_id = (int)enumEventLogProjects.OzoraSoft_Web,
-                module_id = (int)enumEventLogModules.InfoSecControls,
-                controller_id = (int)enumEventLogControllers.InfoSecControls_SystemParameters,
-                action_id = (int)enumEventLogActions.List,
+                project_id = (int)enumEventLogProject.OzoraSoft_Web,
+                module_id = (int)enumEventLogModule.InfoSecControls,
+                controller_id = (int)enumEventLogController.InfoSecControls_SystemParameters,
+                action_id = (int)enumEventLogAction.List,
                 action_result = _status,
                 process_duration = processDuration,
                 process_datetime = processDateStart,
@@ -119,7 +118,7 @@
         }
         catch (Exception ex)
         {
-            ToastService.ShowToast(enmLogLevel.Warning, ex.Message);
+            ToastService.ShowToast(enumLogLevel.Warning, ex.Message);
         }
     }
 }

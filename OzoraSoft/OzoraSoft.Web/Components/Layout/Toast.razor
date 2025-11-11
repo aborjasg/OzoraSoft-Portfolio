@@ -6,7 +6,6 @@
 @rendermode InteractiveServer
 @inject OzoraSoft_API_Services_Client ApiServicesClient
 @inject ToastService ToastService
-@inject EventLogService EventLogService
 
 @if (ShowMessage)
 {
@@ -31,7 +30,7 @@
     private bool ShowMessage { get; set; } = false;
 
     // Message content and type
-    private enmLogLevel MessageType { get; set; } = enmLogLevel.Info; // Default message type
+    private enumLogLevel MessageType { get; set; } = enumLogLevel.Info; // Default message type
     private string MessageTitle { get; set; } = string.Empty;
     private string MessageSubtitle { get; set; } = string.Empty;
     private string MessageBody { get; set; } = string.Empty;
@@ -40,11 +39,11 @@
     // Determines CSS class based on message type
     private string MessageTypeClass => MessageType switch
     {
-        enmLogLevel.Info => "toast-message-info",        
-        enmLogLevel.Debug => "toast-message-debug",        
-        enmLogLevel.Warning => "toast-message-warning",
-        enmLogLevel.Error => "toast-message-alert",
-        enmLogLevel.Critical => "toast-message-critical",
+        enumLogLevel.Info => "toast-message-info",        
+        enumLogLevel.Debug => "toast-message-debug",        
+        enumLogLevel.Warning => "toast-message-warning",
+        enumLogLevel.Error => "toast-message-alert",
+        enumLogLevel.Critical => "toast-message-critical",
         _ => "toast-message-info"
     };
 
@@ -54,7 +53,7 @@
         ToastService.OnHide += HideMessage;
     }
 
-    private async void ShowToast(enmLogLevel type, string messageTitle, string messageSubtitle, string messageBody)
+    private async void ShowToast(enumLogLevel type, string messageTitle, string messageSubtitle, string messageBody)
     {
         MessageType = type;
         MessageTitle = messageTitle;

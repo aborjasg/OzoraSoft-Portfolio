@@ -3,7 +3,7 @@
     /// <summary>
     /// 
     /// </summary>
-    public enum enmTextOrientation
+    public enum enumTextOrientation
     {
         /// <summary>
         /// 

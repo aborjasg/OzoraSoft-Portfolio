@@ -1,6 +1,6 @@
 ﻿namespace OzoraSoft.Library.Enums.Shared
 {
-    public enum enmLogLevel
+    public enum enumLogLevel
     {
         Info,
         Warning,
