@@ -31,7 +31,7 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
                ClockSkew = TimeSpan.Zero // optional, removes default 5 min clock skew
            };
        });
-builder.Services.Configure<JwtSettings>(builder.Configuration.GetSection("JwtSettings"));
+//builder.Services.Configure<JwtSettings>(builder.Configuration.GetSection("JwtSettings"));
 builder.Services.AddSingleton<IJwtSettings, JwtSettings>(e => builder.Configuration.GetSection("JwtSettings").Get<JwtSettings>()!);
 
 builder.Services.AddAuthorization();

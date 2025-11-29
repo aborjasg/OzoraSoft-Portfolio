@@ -13,11 +13,13 @@
   <ItemGroup>
     <ProjectReference Include="..\OzoraSoft.API.Services\OzoraSoft.API.Services.csproj" />
     <ProjectReference Include="..\OzoraSoft.API.Utils\OzoraSoft.API.Utils.csproj" />
+    <ProjectReference Include="..\OzoraSoft.IdentityServer\OzoraSoft.IdentityServer.csproj" />
     <ProjectReference Include="..\OzoraSoft.Web\OzoraSoft.Web.csproj" />
   </ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="Aspire.Hosting.AppHost" Version="9.5.2" />
+    <PackageReference Include="HigginsSoft.IdentityServer8" Version="8.0.4" />
   </ItemGroup>
 
 </Project>
