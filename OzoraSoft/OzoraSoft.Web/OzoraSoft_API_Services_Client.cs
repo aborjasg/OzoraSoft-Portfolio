@@ -78,6 +78,13 @@ namespace OzoraSoft.Web
             return result!.OrderByDescending(x => x.process_datetime).ToArray();
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="record"></param>
+        /// <param name="accessToken"></param>
+        /// <param name="cancellationToken"></param>
+        /// <returns></returns>
         public async Task<int> EventLogs_Add(EventLog record, string accessToken, CancellationToken cancellationToken = default)
         {
             httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);

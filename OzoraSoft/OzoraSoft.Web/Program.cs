@@ -1,5 +1,8 @@
+using Microsoft.AspNetCore.Authentication.OpenIdConnect;
 using Microsoft.AspNetCore.ResponseCompression;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Identity.Web;
+using Microsoft.Identity.Web.UI;
 using OzoraSoft.Library.Messaging.Hubs;
 using OzoraSoft.Library.Messaging.UI_Components;
 using OzoraSoft.Library.Security;
@@ -48,6 +51,9 @@ builder.Services.AddSingleton(loginModel!);
 // UI Components
 builder.Services.AddSingleton<ToastService>();
 
+builder.Services.AddAuthorization();
+builder.Services.AddControllersWithViews().AddMicrosoftIdentityUI();
+
 
 var app = builder.Build();
 
@@ -67,6 +73,9 @@ app.UseAntiforgery();
 app.UseOutputCache();
 
 app.MapStaticAssets();
+
+app.UseAuthentication();
+app.UseAuthorization();
 
 app.MapRazorComponents<App>()
     .AddInteractiveServerRenderMode();

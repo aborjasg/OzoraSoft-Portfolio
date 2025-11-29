@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace OzoraSoft.Library.Enums.Shared
 {
-    public enum enumEventLogProjects
+    public enum enumEventLogProject
     {
         OzoraSoft_APIServices = 1,
         OzoraSoft_APIUtils = 2,
@@ -21,7 +21,7 @@ namespace OzoraSoft.Library.Enums.Shared
         OzoraSoft_Library_Security = 11
     }
 
-    public enum enumEventLogModules
+    public enum enumEventLogModule
     {
         Shared = 1,
         Security = 2,
@@ -29,7 +29,7 @@ namespace OzoraSoft.Library.Enums.Shared
         PictureMaker = 4
     }
 
-    public enum enumEventLogControllers
+    public enum enumEventLogController
     {
         Utils_Authentication = 1,
         Utils_Messaging = 2,
@@ -38,12 +38,15 @@ namespace OzoraSoft.Library.Enums.Shared
         InfoSecControls_OrganizationPolicies = 5
     }
 
-    public enum enumEventLogActions
+    public enum enumEventLogAction
     {
         Create = 1,
         Read = 2,
         Update = 3,
         Delete = 4,
-        List = 5
+        List = 5,
+        Execute = 6,
+        Import = 7,
+        Export = 8
     }
 }

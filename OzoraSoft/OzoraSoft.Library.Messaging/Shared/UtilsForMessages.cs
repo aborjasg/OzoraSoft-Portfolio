@@ -100,7 +100,7 @@ namespace OzoraSoft.Library.Enums.Shared
         /// </summary>
         /// <param name="entryType"></param>
         /// <param name="message"></param>
-        public static void EventLog(enmLogLevel entryType, string message)
+        public static void EventLog(enumLogLevel entryType, string message)
         {
             Console.WriteLine(MaskedwithTimestamp(message, entryType.ToString()));
         }

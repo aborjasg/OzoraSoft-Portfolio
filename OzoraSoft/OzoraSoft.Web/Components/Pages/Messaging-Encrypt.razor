@@ -1,9 +1,12 @@
 ﻿@page "/messaging-encrypt"
+@using OzoraSoft.DataSources.Shared
+@using OzoraSoft.Library.Enums.Shared
 @attribute [StreamRendering(true)]
 @attribute [OutputCache(Duration = 5)]
 @rendermode InteractiveServer
 
 @inject OzoraSoft_API_Util_Client ApiUtilsClient
+@inject OzoraSoft_API_Services_Client ApiServicesClient
 
 <PageTitle>OzoraSoft-Porfolio</PageTitle>
 
@@ -16,10 +19,10 @@
         <textarea class="form-control" aria-label="Input" @bind="inputText" style="width: 500px;" placeholder="Input"></textarea>
     </div>
     <div>
-        <button type="button" class="btn btn-outline-primary" @onclick="EncryptText">
+        <button type="button" class="btn btn-outline-primary" @onclick="() => EncryptText(enumMessagingAction.Encrypt)">
             <i class="bi bi-envelope-check"></i> Encrypt
         </button>
-        <button type="button" class="btn btn-outline-primary" @onclick="DecryptText">
+        <button type="button" class="btn btn-outline-primary" @onclick="() => EncryptText(enumMessagingAction.Decrypt)">
             <i class="bi bi-envelope-open"></i> Decrypt
         </button>
         <button type="button" class="btn btn-outline-dark" @onclick="ResetResults">
@@ -33,14 +36,14 @@
 </div>
 
 @code {
-    private string accessToken = "";
+    private string _accessToken = "";
     private string inputText = "";
     private string outputText = "";
 
     protected override async Task OnInitializedAsync()
     {        
         var result = await ApiUtilsClient.AccessToken_Get();
-        accessToken = result.access_token;
+        _accessToken = result.access_token;
     }
 
     protected void ResetResults()
@@ -49,29 +52,39 @@
         outputText = "";
     }
 
-    protected async Task EncryptText()
+    protected async Task EncryptText(enumMessagingAction action)
     {
         try
         {
-            outputText = await ApiUtilsClient.Messaging_EncryptText(inputText, accessToken);
-        }
-        catch (HttpRequestException hre)
-        {
-            outputText = $"HTTP error: {hre.Message}";
-            Console.WriteLine($"HTTP error: {hre.Message}");
-        }
-        catch (Exception ex)
-        {
-            outputText = $"Unexpected: {ex}";
-            Console.WriteLine($"Unexpected: {ex}");
-        }
-    }
-
-    protected async Task DecryptText()
-    {
-        try
-        {
-            outputText = await ApiUtilsClient.Messaging_DecryptText(inputText, accessToken);
+            var processDateStart = DateTime.Now;
+            switch (action)
+            {
+                case enumMessagingAction.Encrypt:
+                    {
+                        outputText = await ApiUtilsClient.Messaging_EncryptText(inputText, _accessToken);
+                        break;
+                    }
+                case enumMessagingAction.Decrypt:
+                    {
+                        outputText = await ApiUtilsClient.Messaging_DecryptText(inputText, _accessToken);
+                        break;
+                    }
+            }
+            var processDuration = (DateTime.Now - processDateStart).TotalMilliseconds;
+            // TODO: Change width to: action_result in DB
+            var resultId = ApiServicesClient.EventLogs_Add(new EventLog()
+            {
+                project_id = (int)enumEventLogProject.OzoraSoft_Web,
+                module_id = (int)enumEventLogModule.Shared,
+                controller_id = (int)enumEventLogController.Utils_Messaging,
+                action_id = (int)enumEventLogAction.Execute,
+                action_result = $"{action} [Done]",
+                process_duration = processDuration,
+                process_datetime = processDateStart,
+                user_name = "Alex BG",
+                user_ip_address = "127.0.0.1"
+            }, _accessToken);
+            Console.WriteLine($"EventLog Id={resultId}]");
         }
         catch (HttpRequestException hre)
         {
