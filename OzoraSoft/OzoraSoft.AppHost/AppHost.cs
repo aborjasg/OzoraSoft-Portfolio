@@ -2,9 +2,6 @@ using System.Net;
 
 var builder = DistributedApplication.CreateBuilder(args);
 
-// IdentityServer project
-var identity = builder.AddProject<Projects.OzoraSoft_IdentityServer>("ozorasoft-identity")
-.WithHttpHealthCheck("/health");
 
 // API project for Main Services
 var apiServices = builder.AddProject<Projects.OzoraSoft_API_Services>("ozorasoft-api-services")

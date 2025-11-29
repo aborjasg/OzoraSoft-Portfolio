@@ -11,7 +11,6 @@
   <Folder Name="/2-MicroServices/">
     <Project Path="OzoraSoft.API.Services/OzoraSoft.API.Services.csproj" />
     <Project Path="OzoraSoft.API.Utils/OzoraSoft.API.Utils.csproj" />
-    <Project Path="OzoraSoft.IdentityServer/OzoraSoft.IdentityServer.csproj" />
   </Folder>
   <Folder Name="/3-WebApps/">
     <Project Path="OzoraSoft.AppHost/OzoraSoft.AppHost.csproj" />
