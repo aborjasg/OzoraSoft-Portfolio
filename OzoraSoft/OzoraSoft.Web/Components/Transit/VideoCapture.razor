@@ -1,7 +1,124 @@
-﻿<h3>VideoCapture</h3>
+﻿@using IronOcr
+<h3>Real-time Video</h3>
+
+<video id="webcam" autoplay playsinline width="640" height="480" style="border:1px solid #ccc;"></video>
+<br>
+<div>
+    <button id="btnVideoStart">Start Camera</button>
+    <button id="btnVideoStop">Stop Camera</button>
+    <button id="btnVideoCapture">Take Picture</button>
+    <button @onclick="ReadOCR">GetText</button>
+    <span>@TextToShow</span>
+    @* <button id="btnVideoZoomIn">Zoom +</button>
+    <button id="btnVideoZoomOut">Zoom -</button>
+    <button id="btnVideoZoomReset">Zoom Reset</button> *@
+
+    <br>
+    <canvas id="canvas" width="320" height="240"></canvas>
+</div>
+
+<script>
+
+    let stream = null;
+
+    document.getElementById("btnVideoStart").addEventListener("click", async () => {
+        try {
+            stream = await navigator.mediaDevices.getUserMedia({
+                video: {
+                    width: { ideal: 1280 },
+                    height: { ideal: 960 },
+                    facingMode: "user" // front camera
+                },
+                audio: false }
+            );
+            document.getElementById("webcam").srcObject = stream;
+        } catch (err) {
+            alert("Error accessing webcam: " + err.message);
+        }
+    });
+
+    document.getElementById("btnVideoStop").addEventListener("click", () => {
+        if (stream) {
+            stream.getTracks().forEach(track => track.stop());
+            document.getElementById("webcam").srcObject = null;
+        }
+    });
+
+
+    // Capture frame
+    document.getElementById("btnVideoCapture").addEventListener("click", () => {
+        const video = document.getElementById("webcam");
+        const canvas = document.getElementById("canvas");
+        const ctx = canvas.getContext("2d");
+        ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+
+        // Convert to Base64
+        /*
+        const dataUrl = canvas.toDataURL("image/png");
+        // Send to backend
+        fetch("/api/upload", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ image: dataUrl })
+        });
+        */
+    });
+
+    // document.getElementById("btnVideoZoomIn").addEventListener("click", async () => {
+    //     if (stream) {
+    //         const track = stream.getVideoTracks()[0];
+    //         const capabilities = track.getCapabilities();
+
+    //         if (capabilities.zoom) {
+    //             await track.applyConstraints({ advanced: [{ zoom: 2.0 }] });
+    //         } else {
+    //             console.warn("Zoom not supported on this device");
+    //         }
+    //     }
+    // });
+
+    // document.getElementById("btnVideoZoomOut").addEventListener("click", async () => {
+    //     if (stream) {
+    //         const track = stream.getVideoTracks()[0];
+    //         const capabilities = track.getCapabilities();
+
+    //         if (capabilities.zoom) {
+    //             await track.applyConstraints({ advanced: [{ zoom: 0.5 }] });
+    //         } else {
+    //             console.warn("Zoom not supported on this device");
+    //         }
+    //     }
+    // });
+
+    //  document.getElementById("btnVideoZoomReset").addEventListener("click", async () => {
+    //     if (stream) {
+    //         const track = stream.getVideoTracks()[0];
+    //         const capabilities = track.getCapabilities();
+
+    //         if (capabilities.zoom) {
+    //             await track.applyConstraints({ advanced: [{ zoom: 1.0 }] });
+    //         } else {
+    //             console.warn("Zoom not supported on this device");
+    //         }
+    //     }
+
+    // });
+
+</script>
 
 @code {
+    private byte[] imageBytes = new byte[] { };
+    private string TextToShow = "";
 
+    protected void ReadOCR()
+    {
+        TextToShow = "Reading...";
+        var ocr = new IronTesseract();
+        using var input = new OcrInput();
+        input.LoadImage(imageBytes);
+        var result = ocr.Read(input);
+        TextToShow = result.Text;
+    }
 }
 
 
