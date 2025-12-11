@@ -1,26 +1,47 @@
-﻿@using IronOcr
+﻿@using Tesseract;
+@* @attribute [StreamRendering(true)]
+@attribute [OutputCache(Duration = 5)]
+@rendermode InteractiveServer *@
+
 <h3>Real-time Video</h3>
 
-<video id="webcam" autoplay playsinline width="640" height="480" style="border:1px solid #ccc;"></video>
-<br>
 <div>
-    <button id="btnVideoStart">Start Camera</button>
-    <button id="btnVideoStop">Stop Camera</button>
-    <button id="btnVideoCapture">Take Picture</button>
-    <button @onclick="ReadOCR">GetText</button>
-    <span>@TextToShow</span>
+    <video id="webcam" autoplay playsinline width="320" height="240" style="border:1px solid #ccc; display:inline;"></video>
+    <canvas id="myCanvas" style="display:inline; width:160px; height: 120px;"></canvas>
+</div>
+
+<div>    
+    <button id="btnVideoStart" class="btn btn-outline-primary">
+        <i class="bi bi-camera-fill"></i>Start Camera
+    </button>
+    <button id="btnVideoStop" class="btn btn-outline-primary">
+        <i class="bi bi-stop-fill"></i>Stop Camera
+    </button>
+    <button id="btnVideoCapture" class="btn btn-outline-primary">
+        <i class="bi bi-image"></i> Take Picture
+    </button>
+    <button id="btnGetText" type="button" class="btn btn-outline-primary" @onclick="RunOCRcomponent">
+        <i class="bi bi-eyeglasses"></i> Get Text
+    </button>
+    <button id="btnResetText" type="button" class="btn btn-outline-dark" @onclick="ResetResults">
+        <i class="bi bi-x-circle"></i> Reset
+    </button>   
     @* <button id="btnVideoZoomIn">Zoom +</button>
     <button id="btnVideoZoomOut">Zoom -</button>
     <button id="btnVideoZoomReset">Zoom Reset</button> *@
-
-    <br>
-    <canvas id="canvas" width="320" height="240"></canvas>
+</div>
+<div class="col"> 
+    <img id="myImage" src="images\VIN-SUV-2025.png" style="display:inline; width: 300px;" />
+ </div>
+ <div>
+    <textarea class="form-control" aria-label="Output" @bind="TextToShow" style="width: 400px; height: 150px; font-weight: bold;" placeholder="Output"></textarea>
 </div>
 
-<script>
+<script lang="en-us">
 
     let stream = null;
 
+    // [Video] Start
     document.getElementById("btnVideoStart").addEventListener("click", async () => {
         try {
             stream = await navigator.mediaDevices.getUserMedia({
@@ -29,7 +50,8 @@
                     height: { ideal: 960 },
                     facingMode: "user" // front camera
                 },
-                audio: false }
+                audio: false
+            }
             );
             document.getElementById("webcam").srcObject = stream;
         } catch (err) {
@@ -37,6 +59,7 @@
         }
     });
 
+    // [Video] Stop
     document.getElementById("btnVideoStop").addEventListener("click", () => {
         if (stream) {
             stream.getTracks().forEach(track => track.stop());
@@ -44,26 +67,39 @@
         }
     });
 
-
-    // Capture frame
+    // [Video] Capture frame
     document.getElementById("btnVideoCapture").addEventListener("click", () => {
         const video = document.getElementById("webcam");
-        const canvas = document.getElementById("canvas");
+        const canvas = document.getElementById("myCanvas");
         const ctx = canvas.getContext("2d");
         ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
-
-        // Convert to Base64
-        /*
-        const dataUrl = canvas.toDataURL("image/png");
-        // Send to backend
-        fetch("/api/upload", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ image: dataUrl })
-        });
-        */
     });
+     
+    // [Image] Get image byte[]
+    window.getImageBytes = async (imageId) => {
+        const img = document.getElementById(imageId);
+        const canvas = document.getElementById("myCanvas");
+        canvas.width = img.naturalWidth;
+        canvas.height = img.naturalHeight;
+        const ctx = canvas.getContext("2d");
+        ctx.drawImage(img, 0, 0);
 
+        const dataUrl = canvas.toDataURL("image/png");
+        const base64 = dataUrl.split(',')[1];
+        return Uint8Array.from(atob(base64), c => c.charCodeAt(0));
+    };
+
+    // Convert to Base64
+    /*
+    const dataUrl = canvas.toDataURL("image/png");
+    // Send to backend
+    fetch("/api/upload", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ image: dataUrl })
+    });
+    */
+    
     // document.getElementById("btnVideoZoomIn").addEventListener("click", async () => {
     //     if (stream) {
     //         const track = stream.getVideoTracks()[0];
@@ -105,20 +141,3 @@
     // });
 
 </script>
-
-@code {
-    private byte[] imageBytes = new byte[] { };
-    private string TextToShow = "";
-
-    protected void ReadOCR()
-    {
-        TextToShow = "Reading...";
-        var ocr = new IronTesseract();
-        using var input = new OcrInput();
-        input.LoadImage(imageBytes);
-        var result = ocr.Read(input);
-        TextToShow = result.Text;
-    }
-}
-
-
