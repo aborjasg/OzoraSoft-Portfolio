@@ -1,143 +1,37 @@
-﻿@using Tesseract;
-@* @attribute [StreamRendering(true)]
+﻿@attribute [StreamRendering(true)]
 @attribute [OutputCache(Duration = 5)]
-@rendermode InteractiveServer *@
-
-<h3>Real-time Video</h3>
+@rendermode InteractiveServer
 
 <div>
-    <video id="webcam" autoplay playsinline width="320" height="240" style="border:1px solid #ccc; display:inline;"></video>
-    <canvas id="myCanvas" style="display:inline; width:160px; height: 120px;"></canvas>
+
+    <h3>Real-time Video</h3>
+
+    <div>
+        <video id="webcam" autoplay playsinline width="320" height="240" style="border:1px solid #ccc; display:inline;"></video>
+        <canvas id="myCanvas" style="display:inline; width:160px; height: 120px;"></canvas>
+        <img id="myImage" src="images\VIN-SUV-2025.png" style="display:inline; width: 300px;" />
+    </div>
+
+    <div>    
+        <button id="btnVideoStart" class="btn btn-outline-primary" @onclick="StartVideo">
+            <i class="bi bi-camera-fill"></i>Start Camera
+        </button>
+        <button id="btnVideoStop" class="btn btn-outline-primary" @onclick="StopVideo">
+            <i class="bi bi-stop-fill"></i>Stop Camera
+        </button>
+        <button id="btnVideoCapture" class="btn btn-outline-primary" @onclick="CaptureFromVideo">
+            <i class="bi bi-image"></i> Take Picture
+        </button>
+        <button id="btnGetText" type="button" class="btn btn-outline-primary" @onclick="GetTextFromImage">
+            <i class="bi bi-eyeglasses"></i> Get Text
+        </button>
+        <button id="btnResetText" type="button" class="btn btn-outline-dark" @onclick="ResetText">
+            <i class="bi bi-x-circle"></i> Reset
+        </button>   
+
+    </div>
+    <div>
+        <textarea class="form-control" aria-label="Output" @bind="TextFromImage" style="width: 400px; height: 150px; font-weight: bold;" placeholder="Output"></textarea>
+    </div>
+
 </div>
-
-<div>    
-    <button id="btnVideoStart" class="btn btn-outline-primary">
-        <i class="bi bi-camera-fill"></i>Start Camera
-    </button>
-    <button id="btnVideoStop" class="btn btn-outline-primary">
-        <i class="bi bi-stop-fill"></i>Stop Camera
-    </button>
-    <button id="btnVideoCapture" class="btn btn-outline-primary">
-        <i class="bi bi-image"></i> Take Picture
-    </button>
-    <button id="btnGetText" type="button" class="btn btn-outline-primary" @onclick="RunOCRcomponent">
-        <i class="bi bi-eyeglasses"></i> Get Text
-    </button>
-    <button id="btnResetText" type="button" class="btn btn-outline-dark" @onclick="ResetResults">
-        <i class="bi bi-x-circle"></i> Reset
-    </button>   
-    @* <button id="btnVideoZoomIn">Zoom +</button>
-    <button id="btnVideoZoomOut">Zoom -</button>
-    <button id="btnVideoZoomReset">Zoom Reset</button> *@
-</div>
-<div class="col"> 
-    <img id="myImage" src="images\VIN-SUV-2025.png" style="display:inline; width: 300px;" />
- </div>
- <div>
-    <textarea class="form-control" aria-label="Output" @bind="TextToShow" style="width: 400px; height: 150px; font-weight: bold;" placeholder="Output"></textarea>
-</div>
-
-<script lang="en-us">
-
-    let stream = null;
-
-    // [Video] Start
-    document.getElementById("btnVideoStart").addEventListener("click", async () => {
-        try {
-            stream = await navigator.mediaDevices.getUserMedia({
-                video: {
-                    width: { ideal: 1280 },
-                    height: { ideal: 960 },
-                    facingMode: "user" // front camera
-                },
-                audio: false
-            }
-            );
-            document.getElementById("webcam").srcObject = stream;
-        } catch (err) {
-            alert("Error accessing webcam: " + err.message);
-        }
-    });
-
-    // [Video] Stop
-    document.getElementById("btnVideoStop").addEventListener("click", () => {
-        if (stream) {
-            stream.getTracks().forEach(track => track.stop());
-            document.getElementById("webcam").srcObject = null;
-        }
-    });
-
-    // [Video] Capture frame
-    document.getElementById("btnVideoCapture").addEventListener("click", () => {
-        const video = document.getElementById("webcam");
-        const canvas = document.getElementById("myCanvas");
-        const ctx = canvas.getContext("2d");
-        ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
-    });
-     
-    // [Image] Get image byte[]
-    window.getImageBytes = async (imageId) => {
-        const img = document.getElementById(imageId);
-        const canvas = document.getElementById("myCanvas");
-        canvas.width = img.naturalWidth;
-        canvas.height = img.naturalHeight;
-        const ctx = canvas.getContext("2d");
-        ctx.drawImage(img, 0, 0);
-
-        const dataUrl = canvas.toDataURL("image/png");
-        const base64 = dataUrl.split(',')[1];
-        return Uint8Array.from(atob(base64), c => c.charCodeAt(0));
-    };
-
-    // Convert to Base64
-    /*
-    const dataUrl = canvas.toDataURL("image/png");
-    // Send to backend
-    fetch("/api/upload", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ image: dataUrl })
-    });
-    */
-    
-    // document.getElementById("btnVideoZoomIn").addEventListener("click", async () => {
-    //     if (stream) {
-    //         const track = stream.getVideoTracks()[0];
-    //         const capabilities = track.getCapabilities();
-
-    //         if (capabilities.zoom) {
-    //             await track.applyConstraints({ advanced: [{ zoom: 2.0 }] });
-    //         } else {
-    //             console.warn("Zoom not supported on this device");
-    //         }
-    //     }
-    // });
-
-    // document.getElementById("btnVideoZoomOut").addEventListener("click", async () => {
-    //     if (stream) {
-    //         const track = stream.getVideoTracks()[0];
-    //         const capabilities = track.getCapabilities();
-
-    //         if (capabilities.zoom) {
-    //             await track.applyConstraints({ advanced: [{ zoom: 0.5 }] });
-    //         } else {
-    //             console.warn("Zoom not supported on this device");
-    //         }
-    //     }
-    // });
-
-    //  document.getElementById("btnVideoZoomReset").addEventListener("click", async () => {
-    //     if (stream) {
-    //         const track = stream.getVideoTracks()[0];
-    //         const capabilities = track.getCapabilities();
-
-    //         if (capabilities.zoom) {
-    //             await track.applyConstraints({ advanced: [{ zoom: 1.0 }] });
-    //         } else {
-    //             console.warn("Zoom not supported on this device");
-    //         }
-    //     }
-
-    // });
-
-</script>
