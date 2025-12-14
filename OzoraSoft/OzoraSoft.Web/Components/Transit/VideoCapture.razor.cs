@@ -1,6 +1,11 @@
-﻿using IronOcr;
+﻿using Azure.Core;
+using IronOcr;
 using Microsoft.AspNetCore.Components;
 using Microsoft.JSInterop;
+using Microsoft.VisualStudio.TextTemplating;
+using OzoraSoft.DataSources.Shared;
+using OzoraSoft.Library.Enums.Shared;
+using System;
 using Tesseract;
 
 namespace OzoraSoft.Web.Components.Transit
@@ -11,7 +16,14 @@ namespace OzoraSoft.Web.Components.Transit
 
         [Inject] private IJSRuntime JS { get; set; } = default!;
         private IJSObjectReference? _module;
-        private string TextFromImage { get; set; } = string.Empty;
+        private string _accessToken = "";
+        protected string TextFromImage { get; set; } = string.Empty;
+
+        protected override async Task OnInitializedAsync()
+        {
+            var result = await ApiUtilsClient.AccessToken_Get();
+            _accessToken = result.access_token;
+        }
 
         protected override async Task OnAfterRenderAsync(bool firstRender)
         {
@@ -64,10 +76,11 @@ namespace OzoraSoft.Web.Components.Transit
             try
             {
                 if (_module == null) { TextFromImage = "JS module not loaded."; return; }
+                var processDateStart = DateTime.Now;
 
                 //  capture the displayed image element into canvas first
                 //await _module.InvokeVoidAsync("captureToCanvas", "webcam", "myCanvas");
-                
+
                 // get from image
                 //await _module.InvokeVoidAsync("imageElementToCanvas", "myImage", "myCanvas");
 
@@ -86,27 +99,49 @@ namespace OzoraSoft.Web.Components.Transit
                 //TextFromImage = result.Text;
 
 
-                // Component: Tesseract (Free - in testing)
+                // Component: Tesseract (Free - in review)
                 using var img = Pix.LoadFromMemory(imageBytes);
                 //string tessDataPath = Path.Combine(AppContext.BaseDirectory, "tessdata"); // adjust path
                 string pathLibrary = @"C:\\Users\\aborj\\Documents\\GitHub\\OzoraSoft-Portfolio\\Libraries";  //AppContext.BaseDirectory;
                 string tessDataPath = Path.Combine(pathLibrary, "tessdata");
                 using var engine = new TesseractEngine(tessDataPath, "eng+fra+hun+lat", EngineMode.Default);
                 using var page = engine.Process(img);
-                var confidence = $"{page.GetMeanConfidence()}"; // 0.0 – 1.0
+                var confidence = $"OCR confidence:{page.GetMeanConfidence()}"; // 0.0 – 1.0
 
-                TextFromImage = $"[OCR confidence:{confidence}] \n{page.GetText()}";
+                TextFromImage = $"{page.GetText()}";                                
 
-                using var iter = page.GetIterator();
-                iter.Begin();
-
-                do
+                if (!string.IsNullOrEmpty(TextFromImage.Trim()))
                 {
-                    string text = iter.GetText(PageIteratorLevel.Word);
-                    float wordConf = iter.GetConfidence(PageIteratorLevel.Word);
-                    Console.WriteLine($"{text} (conf: {wordConf})");
-                } while (iter.Next(PageIteratorLevel.Word));
+                    using var iter = page.GetIterator();
+                    iter.Begin();
 
+                    do
+                    {
+                        string text = iter.GetText(PageIteratorLevel.Word);
+                        float wordConf = iter.GetConfidence(PageIteratorLevel.Word);
+                        Console.WriteLine($"{text} (conf: {wordConf})");
+                    } while (iter.Next(PageIteratorLevel.Word));
+
+                    // Call API EventLog
+                    var processDuration = (DateTime.Now - processDateStart).TotalMilliseconds;
+                    var resultId = ApiServicesClient.EventLogs_Add(new EventLog()
+                    {
+                        project_id = (int)enumEventLogProject.OzoraSoft_Web,
+                        module_id = (int)enumEventLogModule.Transit,
+                        controller_id = (int)enumEventLogController.Transit_RealTimeStream,
+                        action_id = (int)enumEventLogAction.Execute,
+                        action_result = $"{confidence}",
+                        process_duration = processDuration,
+                        process_datetime = processDateStart,
+                        user_name = "Alex BG",
+                        user_ip_address = "127.0.0.1"
+                    }, _accessToken);
+                    Console.WriteLine($"EventLog Id={resultId}]");
+                }
+                else
+                {
+                    TextFromImage = "[No text recognized]";
+                }
             }
             catch (JSException ex)
             {
@@ -117,7 +152,15 @@ namespace OzoraSoft.Web.Components.Transit
                 Console.WriteLine(ex.ToString());
                 TextFromImage = $"Error during OCR: {ex.Message}";
             }
-            StateHasChanged();
+            finally
+            {
+                StateHasChanged();
+            }
+        }
+
+        private async Task SaveImage()
+        {
+
         }
 
         private void ResetText()
@@ -127,7 +170,11 @@ namespace OzoraSoft.Web.Components.Transit
 
         public async ValueTask DisposeAsync()
         {
-            if (_module != null) await _module.DisposeAsync();
+            if (_module != null)
+            {
+                await StopVideo();
+                await _module.DisposeAsync();
+            }
         }
     }
 }

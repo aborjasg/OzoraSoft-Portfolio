@@ -13,7 +13,7 @@ namespace OzoraSoft.DataSources
     {
         public OzoraSoft_Shared_DBContext(DbContextOptions<OzoraSoft_Shared_DBContext> options) : base(options) { }
 
-        // Shared DB:
+        // DB Objects:
         public DbSet<EventLog> EventLogs { get; set; }        
 
         public OzoraSoft_Shared_DBContext()

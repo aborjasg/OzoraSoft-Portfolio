@@ -70,8 +70,7 @@
                         break;
                     }
             }
-            var processDuration = (DateTime.Now - processDateStart).TotalMilliseconds;
-            // TODO: Change width to: action_result in DB
+            var processDuration = (DateTime.Now - processDateStart).TotalMilliseconds;            
             var resultId = ApiServicesClient.EventLogs_Add(new EventLog()
             {
                 project_id = (int)enumEventLogProject.OzoraSoft_Web,

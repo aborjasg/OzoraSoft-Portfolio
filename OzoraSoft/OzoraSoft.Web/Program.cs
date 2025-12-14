@@ -35,7 +35,7 @@ builder.Services.AddHttpClient<OzoraSoft_API_Services_Client>(client =>
 });
 
 // SignalR
-//builder.Services.AddSignalR();
+builder.Services.AddSignalR();
 
 builder.Services.AddResponseCompression(opts =>
 {
@@ -89,6 +89,6 @@ app.MapRazorComponents<App>()
     .AddInteractiveServerRenderMode();
 
 app.MapDefaultEndpoints();
-//app.MapHub<ChatHub>(ApiServices.API_CHATHUB_ENDPOINT);
+app.MapHub<ChatHub>(ApiServices.API_CHATHUB_ENDPOINT);
 
 app.Run();

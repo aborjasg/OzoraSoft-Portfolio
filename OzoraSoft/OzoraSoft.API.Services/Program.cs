@@ -46,12 +46,17 @@ builder.Services.AddDbContext<OzoraSoft_InfoSecControls_DBContext>(options =>
             ServerVersion.AutoDetect(UtilsForMessages.Decompress(builder.Configuration.GetConnectionString("OzoraSoft_InfoSecControls_Connection")!))
         ));
 
+builder.Services.AddDbContext<OzoraSoft_Transit_DBContext>(options =>
+    options.UseMySql(
+            UtilsForMessages.Decompress(builder.Configuration.GetConnectionString("OzoraSoft_Transit_Connection")!),
+            ServerVersion.AutoDetect(UtilsForMessages.Decompress(builder.Configuration.GetConnectionString("OzoraSoft_Transit_Connection")!))
+        ));
+
 builder.Services.AddDbContext<OzoraSoft_Shared_DBContext>(options =>
     options.UseMySql(
             UtilsForMessages.Decompress(builder.Configuration.GetConnectionString("OzoraSoft_Shared_Connection")!),
             ServerVersion.AutoDetect(UtilsForMessages.Decompress(builder.Configuration.GetConnectionString("OzoraSoft_Shared_Connection")!))
         ));
-
 
 var app = builder.Build();
 
