@@ -1,7 +1,12 @@
 ﻿@page "/"
+@attribute [StreamRendering(true)]
+@attribute [OutputCache(Duration = 5)]
+@rendermode InteractiveServer
 
 <PageTitle>OzoraSoft-Porfolio</PageTitle>
 
 <h3>Home</h3>
 
-Welcome to OzoraSoft Portfolio
+<div>
+    <OzoraSoft.Web.Components.Transit.VideoCapture/>
+</div>

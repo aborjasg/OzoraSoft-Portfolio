@@ -1,0 +1,94 @@
+﻿@using Tesseract;
+
+<div>        
+    <img id="myImage" src="images\VIN-SUV-2025.png" style="display:inline; width: 300px;" />
+    <canvas id="myCanvas" style="visibility:hidden; display:inline; width:160px; height: 120px;"></canvas>
+</div>
+<div>
+    <button id="btnGetText" type="button" class="btn btn-outline-primary" @onclick="RunOCRcomponent">
+        <i class="bi bi-eyeglasses"></i> Get Text
+    </button>
+    <button id="btnResetText" type="button" class="btn btn-outline-dark" @onclick="ResetResults">
+        <i class="bi bi-x-circle"></i> Reset
+    </button>
+</div>
+<div>
+    <textarea class="form-control" aria-label="Output" @bind="TextFromImage" style="width: 400px; height: 150px; font-weight: bold;" placeholder="Output"></textarea>
+</div>
+
+@code {
+    public byte[]? Image { get; set; }
+
+    [Inject] private IJSRuntime JS { get; set; } = default!;
+    private IJSObjectReference? _module;        
+    private string TextFromImage { get; set; } = string.Empty;
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            _module = await JS.InvokeAsync<IJSObjectReference>("import", "./js/transit.js");
+        }
+    }
+
+    private async Task StartVideo()
+    {
+        if (_module == null) return;
+        await _module.InvokeVoidAsync("startVideo", "webcam");
+    }
+
+    private async Task StopVideo()
+    {
+        if (_module == null) return;
+        await _module.InvokeVoidAsync("stopVideo", "webcam");
+    }
+
+    private async Task CaptureFromVideo()
+    {
+        if (_module == null) return;
+        await _module.InvokeVoidAsync("captureToCanvas", "webcam", "myCanvas");
+    }
+
+    private async Task RunOCRcomponent()
+    {
+        try
+        {
+            if (_module == null) { TextFromImage = "JS module not loaded."; return; }
+
+            // Option A: capture the displayed image element into canvas first
+            await _module.InvokeVoidAsync("imageElementToCanvas", "myImage", "myCanvas");
+
+            // Get base64 PNG from canvas
+            var base64 = await _module.InvokeAsync<string>("getCanvasAsBase64", "myCanvas");
+            if (string.IsNullOrEmpty(base64)) { TextFromImage = "No image data."; return; }
+
+            var imageBytes = Convert.FromBase64String(base64);
+
+            // Tesseract usage
+            using var img = Pix.LoadFromMemory(imageBytes);
+            //string tessDataPath = Path.Combine(AppContext.BaseDirectory, "tessdata"); // adjust path
+            string pathLibrary = @"C:\\Users\\aborj\\Documents\\GitHub\\OzoraSoft-Portfolio\\Libraries";  //AppContext.BaseDirectory;
+            string tessDataPath = Path.Combine(pathLibrary, "tessdata");
+            using var engine = new TesseractEngine(tessDataPath, "eng", EngineMode.Default);
+            using var page = engine.Process(img);
+            TextFromImage = page.GetText();
+        }
+        catch (Exception ex)
+        {
+            TextFromImage = $"Error during OCR: {ex.Message}";
+        }
+        StateHasChanged();
+    }
+
+    private void ResetResults()
+    {
+        TextFromImage = string.Empty;
+    }
+
+    public async ValueTask DisposeAsync()
+    {
+        if (_module != null) await _module.DisposeAsync();
+    }
+
+
+}
