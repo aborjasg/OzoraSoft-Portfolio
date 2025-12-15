@@ -4,6 +4,7 @@ using OzoraSoft.API.Services.Models;
 using OzoraSoft.API.Utils.Models;
 using OzoraSoft.DataSources.InfoSecControls;
 using OzoraSoft.DataSources.Shared;
+using OzoraSoft.DataSources.Transit;
 using OzoraSoft.Library.Security.Services;
 using System.Net.Http.Headers;
 using System.Net.Http.Json;
@@ -95,6 +96,36 @@ namespace OzoraSoft.Web
             if (response.IsSuccessStatusCode)
             {
                 result = await response.Content.ReadFromJsonAsync<int>(cancellationToken: cancellationToken);
+            }
+            return result!;
+        }
+
+        public async Task<int> VideoCaptures_Add(VideoCapture record, string accessToken, CancellationToken cancellationToken = default)
+        {
+            httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
+            int result = 0;
+
+            using var response = await httpClient.PostAsJsonAsync($"{ApiServices.API_TRANSIT_VIDEOCAPTURE}", record, cancellationToken);
+
+            if (response.IsSuccessStatusCode)
+            {
+                var obj = await response.Content.ReadFromJsonAsync<VideoCapture>(cancellationToken: cancellationToken);
+                result = obj!.id;
+            }
+            return result!;
+        }
+
+        public async Task<VideoCapture> VideoCaptures_Get(int recordId, string accessToken, CancellationToken cancellationToken = default)
+        {
+            httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
+            VideoCapture result = new VideoCapture() { };
+
+            using var response = await httpClient.GetAsync($"{ApiServices.API_TRANSIT_VIDEOCAPTURE}/{recordId}", cancellationToken);
+
+            if (response.IsSuccessStatusCode)
+            {
+                var obj = await response.Content.ReadFromJsonAsync<VideoCapture>(cancellationToken: cancellationToken);
+                if (obj != null) result = obj!;
             }
             return result!;
         }

@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -9,11 +6,16 @@ using OzoraSoft.API.Services.Models;
 using OzoraSoft.DataSources;
 using OzoraSoft.DataSources.Shared;
 using OzoraSoft.Library.Enums.Shared;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace OzoraSoft.API.Services.Shared
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize]
     public class EventLogsController : ControllerBase
     {
         private readonly OzoraSoft_Shared_DBContext _context;

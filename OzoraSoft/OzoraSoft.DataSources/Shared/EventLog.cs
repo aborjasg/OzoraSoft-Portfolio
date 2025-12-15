@@ -16,7 +16,7 @@ namespace OzoraSoft.DataSources.Shared
         public string action_result {  get; set; } = "";
         public double process_duration { get; set; } = 0;
         public DateTime process_datetime { get; set; } = DateTime.Now;
-        public byte visible { get; set; } = 1;
+        public bool visible { get; set; } = true;
         public string user_name { get; set; } = "";
         public string user_ip_address { get; set; } = "";
     }

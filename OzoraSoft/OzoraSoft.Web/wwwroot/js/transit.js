@@ -45,3 +45,25 @@ export function getCanvasAsBase64(canvasId) {
     if (!canvas) throw `Canvas ${canvasId} not found`;    
     return canvas.toDataURL('image/png').split(',')[1]; // base64 only
 }
+
+export function setCanvasAsBase64(canvasId, imageBytesBase64) {    
+    const canvas = document.getElementById(canvasId);
+    if (!canvas) throw new Error(`Canvas ${canvasId} not found`);
+
+    const ctx = canvas.getContext('2d');
+    const img = new Image();
+
+    // Prefix with proper data URI header
+    img.src = "data:image/png;base64," + imageBytesBase64;    
+
+    img.onload = () => {
+        canvas.width = img.naturalWidth;
+        canvas.height = img.naturalHeight;
+        ctx.drawImage(img, 0, 0);
+    };
+
+    img.onerror = (err) => {
+        console.error("Failed to load image from base64 string", err);
+    };
+
+}

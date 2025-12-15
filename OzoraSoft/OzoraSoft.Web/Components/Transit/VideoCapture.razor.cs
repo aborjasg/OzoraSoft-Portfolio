@@ -1,6 +1,6 @@
 ﻿using Azure.Core;
-using IronOcr;
 using Microsoft.AspNetCore.Components;
+using Microsoft.CodeAnalysis.FlowAnalysis;
 using Microsoft.JSInterop;
 using Microsoft.VisualStudio.TextTemplating;
 using OzoraSoft.DataSources.Shared;
@@ -17,6 +17,7 @@ namespace OzoraSoft.Web.Components.Transit
         [Inject] private IJSRuntime JS { get; set; } = default!;
         private IJSObjectReference? _module;
         private string _accessToken = "";
+        private int captureId = 0;
         protected string TextFromImage { get; set; } = string.Empty;
 
         protected override async Task OnInitializedAsync()
@@ -160,7 +161,63 @@ namespace OzoraSoft.Web.Components.Transit
 
         private async Task SaveImage()
         {
+            try
+            {
+                if (_module == null) { TextFromImage = "JS module not loaded."; return; }
 
+                // Get base64 PNG from canvas
+                var base64 = await _module.InvokeAsync<string>("getCanvasAsBase64", "myCanvas");
+                if (string.IsNullOrEmpty(base64)) { TextFromImage = "No image data."; return; }
+
+                var imageBytes = Convert.FromBase64String(UtilsForMessages.Compress(base64));
+
+                var result = ApiServicesClient.VideoCaptures_Add(new OzoraSoft.DataSources.Transit.VideoCapture()
+                {
+                    videodevice_id = 1, // Logitech WebCam
+                    image = imageBytes,
+                    status = true
+                }, _accessToken);
+                if (result.IsCompleted)
+                {
+                    captureId = result.Result;
+                    Console.WriteLine($"New record Id={captureId}]");                    
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.ToString());
+            }
+            finally
+            {
+                StateHasChanged();
+            }
+        }
+
+        private async Task LoadImageFromDB()
+        {
+            try
+            {
+                if (_module == null) { TextFromImage = "JS module not loaded."; return; }
+                captureId = 8;
+                if (captureId > 0)
+                {
+                    var record = await ApiServicesClient.VideoCaptures_Get(captureId, _accessToken);
+                    if (record != null)
+                    {                        
+                        var imageBytes = UtilsForMessages.Decompress(Convert.ToBase64String(record!.image!));
+                        await _module.InvokeAsync<string>("setCanvasAsBase64", "myCanvas", imageBytes);
+                        Console.WriteLine($"New record Id={captureId}]");
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.ToString());
+            }
+            finally
+            {
+                StateHasChanged();
+            }
         }
 
         private void ResetText()
