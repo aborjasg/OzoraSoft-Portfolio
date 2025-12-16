@@ -43,7 +43,7 @@ export function imageElementToCanvas(imageId, canvasId) {
 export function getCanvasAsBase64(canvasId) {
     const canvas = document.getElementById(canvasId);    
     if (!canvas) throw `Canvas ${canvasId} not found`;    
-    return canvas.toDataURL('image/png').split(',')[1]; // base64 only
+    return canvas.toDataURL('image/png').split(',')[1]; // base64 only    
 }
 
 export function setCanvasAsBase64(canvasId, imageBytesBase64) {    

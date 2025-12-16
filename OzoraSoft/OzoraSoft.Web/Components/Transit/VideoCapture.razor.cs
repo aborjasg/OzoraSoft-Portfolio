@@ -40,19 +40,21 @@ namespace OzoraSoft.Web.Components.Transit
         {
             if (_module == null) return;
             await _module.InvokeVoidAsync("startVideo", "webcam");
+            ToastService.ShowToast(enumLogLevel.Info, $"Camera started");
         }
 
         private async Task StopVideo()
         {
             if (_module == null) return;
             await _module.InvokeVoidAsync("stopVideo", "webcam");
+            ToastService.ShowToast(enumLogLevel.Info, $"Camera stopped");
         }
 
         private async Task CaptureFromVideo()
         {
             if (_module == null) return;
             await _module.InvokeVoidAsync("captureToCanvas", "webcam", "myCanvas");
-            StateHasChanged();
+            ToastService.ShowToast(enumLogLevel.Info, $"Image captured from Camera");            
         }
 
         private async Task GetImage()
@@ -63,6 +65,7 @@ namespace OzoraSoft.Web.Components.Transit
 
                 // get from image
                 await _module.InvokeVoidAsync("imageElementToCanvas", "myImage", "myCanvas");
+                ToastService.ShowToast(enumLogLevel.Info, "Image loaded locally");
             }
             catch (Exception ex)
             {
@@ -136,7 +139,9 @@ namespace OzoraSoft.Web.Components.Transit
                         process_datetime = processDateStart,
                         user_name = "Alex BG",
                         user_ip_address = "127.0.0.1"
-                    }, _accessToken);
+                    }, _accessToken);                    
+                    
+                    ToastService.ShowToast(enumLogLevel.Info, $"OCR process finished");
                     Console.WriteLine($"EventLog Id={resultId}]");
                 }
                 else
@@ -146,12 +151,13 @@ namespace OzoraSoft.Web.Components.Transit
             }
             catch (JSException ex)
             {
-                Console.WriteLine("Interop error: " + ex.Message);
+                ToastService.ShowToast(enumLogLevel.Warning, $"Interop error: {ex.Message}");
+                Console.WriteLine("Interop error: " + ex.Message);                
             }
             catch (Exception ex)
             {
-                Console.WriteLine(ex.ToString());
-                TextFromImage = $"Error during OCR: {ex.Message}";
+                ToastService.ShowToast(enumLogLevel.Warning, $"Error: {ex.Message}");
+                Console.WriteLine(ex.ToString());                
             }
             finally
             {
@@ -171,20 +177,27 @@ namespace OzoraSoft.Web.Components.Transit
 
                 var imageBytes = Convert.FromBase64String(UtilsForMessages.Compress(base64));
 
-                var result = ApiServicesClient.VideoCaptures_Add(new OzoraSoft.DataSources.Transit.VideoCapture()
+                var result = await ApiServicesClient.VideoCaptures_Add(new OzoraSoft.DataSources.Transit.VideoCapture()
                 {
                     videodevice_id = 1, // Logitech WebCam
                     image = imageBytes,
                     status = true
                 }, _accessToken);
-                if (result.IsCompleted)
+                
+                if (result > 0)
                 {
-                    captureId = result.Result;
+                    captureId = result;
+                    ToastService.ShowToast(enumLogLevel.Info, "Image saved into DB");
                     Console.WriteLine($"New record Id={captureId}]");                    
+                }
+                else
+                {
+                    throw new Exception("Image not saved");
                 }
             }
             catch (Exception ex)
             {
+                ToastService.ShowToast(enumLogLevel.Warning, $"Error: {ex.Message}");
                 Console.WriteLine(ex.ToString());
             }
             finally
@@ -197,8 +210,7 @@ namespace OzoraSoft.Web.Components.Transit
         {
             try
             {
-                if (_module == null) { TextFromImage = "JS module not loaded."; return; }
-                captureId = 8;
+                if (_module == null) { TextFromImage = "JS module not loaded."; return; }                
                 if (captureId > 0)
                 {
                     var record = await ApiServicesClient.VideoCaptures_Get(captureId, _accessToken);
@@ -206,13 +218,20 @@ namespace OzoraSoft.Web.Components.Transit
                     {                        
                         var imageBytes = UtilsForMessages.Decompress(Convert.ToBase64String(record!.image!));
                         await _module.InvokeAsync<string>("setCanvasAsBase64", "myCanvas", imageBytes);
+                        ToastService.ShowToast(enumLogLevel.Info, $"Read image from DB");
                         Console.WriteLine($"New record Id={captureId}]");
+                        
                     }
+                }
+                else
+                {
+                    ToastService.ShowToast(enumLogLevel.Info, $"Save image at first");
                 }
             }
             catch (Exception ex)
             {
-                Console.WriteLine(ex.ToString());
+                ToastService.ShowToast(enumLogLevel.Warning, $"Error: {ex.Message}");
+                Console.WriteLine(ex.ToString());                
             }
             finally
             {
