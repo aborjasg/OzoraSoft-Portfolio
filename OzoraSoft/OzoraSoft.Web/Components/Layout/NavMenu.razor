@@ -15,7 +15,17 @@
                 <span class="bi bi-house-door-fill" aria-hidden="true"></span> Home
             </NavLink>
 		</div>
-            
+        
+        <div class="nav-item px-3">
+            <NavLink data-bs-toggle="collapse" href="#submenu_transit" role="button" aria-expanded="false" aria-controls="submenu_transit">
+                <span class="bi bi-truck-front-fill" aria-hidden="false"></span> OzoraSoft-Transit
+            </NavLink>
+            <div class="nav-item px-3" id="submenu_transit">
+                <NavLink href="transit-realtimestream">
+                    <span class="bi bi-list-nested" aria-hidden="true"></span> Real-time Stream
+                </NavLink>
+            </div>
+        </div>
         <div class="nav-item px-3">
             <NavLink data-bs-toggle="collapse" href="#submenu_infoseccontrols" role="button" aria-expanded="false" aria-controls="submenu_infoseccontrols">                
                 <span class="bi bi-cpu" aria-hidden="false"></span> Information Security Controls

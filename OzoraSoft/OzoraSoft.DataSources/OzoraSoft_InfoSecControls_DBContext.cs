@@ -13,7 +13,7 @@ namespace OzoraSoft.DataSources
     {
         public OzoraSoft_InfoSecControls_DBContext(DbContextOptions<OzoraSoft_InfoSecControls_DBContext> options) : base(options) { }
 
-        // InfoSecControls DB:
+        // DB objects:
         public DbSet<SystemParameter> SystemParameters { get; set; }
         public DbSet<OrganizationPolicy> OrganizationPolicies { get; set; }
 

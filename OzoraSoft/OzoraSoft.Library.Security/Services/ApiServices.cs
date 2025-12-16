@@ -19,5 +19,6 @@ namespace OzoraSoft.Library.Security.Services
         public const string API_EVENTLOG_LIST = "/api/EventLogs/list";
         public const string API_CHATHUB_ENDPOINT = "/chathub";
         public const string API_ERROR_ENDPOINT = "/Error";
+        public const string API_TRANSIT_VIDEOCAPTURE = "/api/VideoCaptures";
     }
 }

@@ -54,6 +54,14 @@ builder.Services.AddSingleton<ToastService>();
 builder.Services.AddAuthorization();
 builder.Services.AddControllersWithViews().AddMicrosoftIdentityUI();
 
+builder.Logging.AddConsole();
+builder.Services.AddServerSideBlazor()
+    .AddHubOptions(options =>
+    {
+        options.MaximumReceiveMessageSize = 1024 * 1024 * 1024; // 1 GB
+        options.EnableDetailedErrors = true;
+    });
+
 
 var app = builder.Build();
 

@@ -41,17 +41,22 @@ builder.Services.AddAuthorization();
 
 // DB Contexts
 builder.Services.AddDbContext<OzoraSoft_InfoSecControls_DBContext>(options =>
-    options.UseMySql(
+    options.UseMySQL(
             UtilsForMessages.Decompress(builder.Configuration.GetConnectionString("OzoraSoft_InfoSecControls_Connection")!),
-            ServerVersion.AutoDetect(UtilsForMessages.Decompress(builder.Configuration.GetConnectionString("OzoraSoft_InfoSecControls_Connection")!))
+            mySqlOptions => mySqlOptions.EnableRetryOnFailure()
+        ));
+
+builder.Services.AddDbContext<OzoraSoft_Transit_DBContext>(options =>
+    options.UseMySQL(
+            UtilsForMessages.Decompress(builder.Configuration.GetConnectionString("OzoraSoft_Transit_Connection")!),
+            mySqlOptions => mySqlOptions.EnableRetryOnFailure()
         ));
 
 builder.Services.AddDbContext<OzoraSoft_Shared_DBContext>(options =>
-    options.UseMySql(
+    options.UseMySQL(
             UtilsForMessages.Decompress(builder.Configuration.GetConnectionString("OzoraSoft_Shared_Connection")!),
-            ServerVersion.AutoDetect(UtilsForMessages.Decompress(builder.Configuration.GetConnectionString("OzoraSoft_Shared_Connection")!))
+            mySqlOptions => mySqlOptions.EnableRetryOnFailure()
         ));
-
 
 var app = builder.Build();
 

@@ -1,0 +1,97 @@
+﻿@page "/transit-realtimestream"
+@using OzoraSoft.Library.Messaging.UI_Components
+@attribute [StreamRendering(true)]
+@attribute [OutputCache(Duration = 5)]
+@rendermode InteractiveServer
+
+@inject OzoraSoft_API_Util_Client ApiUtilsClient
+@inject OzoraSoft_API_Services_Client ApiServicesClient
+@inject ToastService ToastService
+@implements IAsyncDisposable
+
+<PageTitle>OzoraSoft-Porfolio</PageTitle>
+
+<h3>Real-time stream</h3>
+
+<div style="border-spacing: 10px; padding: 10px;">
+    <button id="btnVideoStart" class="btn btn-outline-primary" @onclick="StartVideo">
+        <i class="bi bi-camera-fill"></i>Start Camera
+    </button>
+    <button id="btnVideoStop" class="btn btn-outline-primary" @onclick="StopVideo">
+        <i class="bi bi-stop-fill"></i>Stop Camera
+    </button>
+    <button id="btnVideoCapture" class="btn btn-outline-primary" @onclick="CaptureFromVideo">
+        <i class="bi bi-image"></i> Take Picture
+    </button>
+    <button id="btnGetText" type="button" class="btn btn-outline-primary" @onclick="GetImage">
+        <i class="bi bi-image"></i> Get Image
+    </button>
+    <button id="btnGetText" type="button" class="btn btn-outline-primary" @onclick="ApplyOCR">
+        <i class="bi bi-eyeglasses"></i> Apply OCR
+    </button>
+    <button id="btnSaveImage" type="button" class="btn btn-outline-primary" @onclick="SaveImage">
+        <i class="bi bi-save"></i> Save Image
+    </button>
+    <button id="btnSaveImage" type="button" class="btn btn-outline-primary" @onclick="LoadImageFromDB">
+        <i class="bi bi-save"></i> Load Image
+    </button>
+    <button id="btnResetText" type="button" class="btn btn-outline-dark" @onclick="ResetText">
+        <i class="bi bi-x-circle"></i> Reset
+    </button>
+</div>
+<div class="table">
+    <div class="row">
+        <div class="col">
+            <h4>Video</h4>
+            <video id="webcam" autoplay playsinline width="640" height="480" style="border:1px solid #ccc; display:inline;"></video>                        
+        </div>       
+        <div class="col">
+            <h4>Image</h4>
+            <canvas id="myCanvas" style="display:inline; width:250px;"></canvas>
+        </div>
+        <div class="col">
+            <h4>OCR Result</h4>
+            <textarea class="form-control" aria-label="Output" @bind="TextFromImage" style="width: 250px; height: 200px; font-weight: bold;display:inline;" placeholder="Output"></textarea>
+        </div>
+    </div>    
+    <div class="row">
+        <div class="col">            
+            <div class="card" style="width: 18rem;">
+                <img src="/images/canvas-00.png" class="card-img-top" alt="...">
+                <div class="card-body">
+                    <p class="card-text">Canvas #00</p>
+                </div>
+            </div>
+        </div>
+        <div class="col">
+            <div class="card" style="width: 18rem;">
+                <img src="/images/canvas-01.png" class="card-img-top" alt="...">
+                <div class="card-body">
+                    <p class="card-text">Canvas #01</p>
+                </div>
+            </div>
+        </div>
+        <div class="col">
+            <div class="card" style="width: 18rem;">
+                <img src="/images/canvas-02.png" class="card-img-top" alt="...">
+                <div class="card-body">
+                    <p class="card-text">Canvas #02</p>
+                </div>
+            </div>
+        </div>
+        <div class="col">
+            <div class="card" style="width: 18rem;">
+                <img src="/images/canvas-03.png" class="card-img-top" alt="...">
+                <div class="card-body">
+                    <p class="card-text">Canvas #03</p>
+                </div>                
+            </div>
+        </div>
+    </div>
+  
+    <div class="row"> 
+        <div class="col">
+            <img id="myImage" src="/images/canvas-00.png" style="display:inline; width: 320px; height: 240px; visibility: hidden;" />
+        </div>
+    </div>
+</div>

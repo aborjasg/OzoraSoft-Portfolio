@@ -26,7 +26,8 @@ namespace OzoraSoft.Library.Enums.Shared
         Shared = 1,
         Security = 2,
         InfoSecControls = 3,
-        PictureMaker = 4
+        PictureMaker = 4,
+        Transit = 5
     }
 
     public enum enumEventLogController
@@ -35,7 +36,8 @@ namespace OzoraSoft.Library.Enums.Shared
         Utils_Messaging = 2,
         Shared_EventLogs = 3,
         InfoSecControls_SystemParameters = 4,
-        InfoSecControls_OrganizationPolicies = 5
+        InfoSecControls_OrganizationPolicies = 5,
+        Transit_RealTimeStream = 6
     }
 
     public enum enumEventLogAction
